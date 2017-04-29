@@ -1,0 +1,13 @@
+{
+  "intents": [
+    {
+      "intent": "FindThing",
+      "slots": [
+        {
+          "name": "Thing",
+          "type": "LIST_OF_SIGNS"
+        }
+      ]
+    }
+  ]
+}
