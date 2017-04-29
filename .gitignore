@@ -1,0 +1,6 @@
+
+alexaSkill/.env
+
+*.env
+
+alexaSkill/node_modules/*
