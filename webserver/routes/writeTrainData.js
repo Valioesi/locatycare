@@ -12,6 +12,7 @@ exports.writeTrainData = function(req, res){
     if(err) {
       return console.error('could not connect to postgres', err);
     }
+    //TODO: rename gear_id in code and database
     var query = 'insert into trainData (device_id, gear_id, rssi, location, time) values (\''+device_id+'\', \''+gear_id+'\', '+rssi+ ', \'' +location+ '\', NOW());';
     console.log(query);
     client.query(query, function(err, result) {

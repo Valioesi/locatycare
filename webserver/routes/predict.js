@@ -10,6 +10,7 @@ exports.predict = function(req, res){
     if(err) {
       return console.error('could not connect to postgres', err);
     }
+    //TODO: change the fact, that we have two gears; either we have one device (keys) for now or we have multiple devices
     // #
     var query = 'select * from trainData1 where gear_id = \'' + gear_id_oranges + '\'';
     client.query(query, function(err, result) {
