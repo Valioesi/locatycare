@@ -4,3 +4,6 @@ alexaSkill/.env
 *.env
 
 alexaSkill/node_modules/*
+
+
+webserver/node_modules/*
