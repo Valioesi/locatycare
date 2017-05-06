@@ -82,7 +82,7 @@ exports.predict = function(req, res){
       //Alternative: we only have one row in testData 
       //In this case we only call getLocation once for the values that are currently in the table rssiData
       //and send back the result of the nearest neighbour algorithm
-    query = 'select gear_id, rssi_c24, rssi_617, rssi_230, time from rssiData order by time';
+    query = 'select gear_id, rssi_c24, rssi_617, rssi_230, time from rssiData';
     client.query(query, function(err, result) {
       if(err) {
         return console.error('error running query', err);
