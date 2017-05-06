@@ -13,6 +13,7 @@ exports.writeData = function(req, res){
       return console.error('could not connect to postgres', err);
     }
     //TODO: only keep one row with 3 rssi columns, which get updated every time -> to avoid post processing
+    //or maybe it would be better to have several rows to get an average -> to be discussed
     //TODO: rename gear_id in code and database
     var query = 'insert into rssiData (device_id, gear_id, rssi, time) values (\''+device_id+'\', \''+gear_id+'\', '+rssi+', NOW());'
     console.log(query);
