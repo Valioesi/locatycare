@@ -16,6 +16,9 @@ exports.writeData = function(req, res){
     //or maybe it would be better to have several rows to get an average -> to be discussed
     //TODO: rename gear_id in code and database
     var query = 'insert into rssiData (device_id, gear_id, rssi, time) values (\''+device_id+'\', \''+gear_id+'\', '+rssi+', NOW());'
+    // !!Change!!
+    //new code, which only updates the one row; only the appropriate (depending on the device) is updated
+    var query = 'UPDATE rssiData SET '+device_id+' = '+rssi+', time = NOW() WHERE gear_id = \''+gear_id+'\'';
     console.log(query);
     client.query(query, function(err, result) {
       if(err) {
