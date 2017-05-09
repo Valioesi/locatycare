@@ -10,6 +10,7 @@ exports.writeData = function(req, res){
   var client = new pg.Client(conString);
   client.connect(function(err) {
     if(err) {
+      res.status(500).send('could not connect to postgres');
       return console.error('could not connect to postgres', err);
     }
     //TODO: only keep one row with 3 rssi columns, which get updated every time -> to avoid post processing
@@ -26,8 +27,7 @@ exports.writeData = function(req, res){
       }
      
       client.end();
-      res.writeHead(200);
-      res.end(query);
+      res.status(200).send(query);
     });
   });
 };

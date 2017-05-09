@@ -1,3 +1,7 @@
+/*
+  this file was previously predict.js in the cattracking project
+*/
+
 exports.predict = function(req, res){
   var pg = require('pg');
   var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/cattrack';

@@ -10,6 +10,7 @@ exports.writeTrainData = function(req, res){
   var client = new pg.Client(conString);
   client.connect(function(err) {
     if(err) {
+      res.status(500).send('could not connect to postgres');
       return console.error('could not connect to postgres', err);
     }
     //TODO: delete gear_id in database
@@ -21,8 +22,7 @@ exports.writeTrainData = function(req, res){
       }
       // console.log(result);
       client.end();
-      res.writeHead(200);
-      res.end(query);
+      res.status(200).send(query);
     });
   });
 };
