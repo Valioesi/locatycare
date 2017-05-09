@@ -7,6 +7,7 @@ API Calls:
 | ---  | ---   | ---        |
 | post | /writeTrainData | device_id, rssi, location |
 | post | /writeData | device_id, rssi |
+| post | /predict | search |
 
 To run:
 

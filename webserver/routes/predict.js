@@ -5,6 +5,8 @@ exports.predict = function (req, res) {
     var trainData = [];
     var testData = [];
     var predictions = [];
+    
+    var itemToLookFor = req.body.search;
 
     client.connect(function (err) {
         if (err) {
