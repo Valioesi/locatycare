@@ -6,7 +6,7 @@ exports.predict = function (req, res) {
     var testData = [];
     var predictions = [];
     
-    var itemToLookFor = req.body.search;
+    var itemToLookFor = req.body.search || req.query.search;
 
     client.connect(function (err) {
         if (err) {

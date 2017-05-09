@@ -5,9 +5,9 @@ API Calls:
 
 | Type | Route | Parameters |
 | ---  | ---   | ---        |
-| post | /writeTrainData | device_id, rssi, location |
-| post | /writeData | device_id, rssi |
-| post | /predict | search |
+| post/get | /writeTrainData | device_id, rssi, location |
+| post/get | /writeData | device_id, rssi |
+| post/get | /predict | search |
 
 To run:
 
