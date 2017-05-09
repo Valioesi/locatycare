@@ -1,111 +1,47 @@
-exports.predict = function(req, res){
-  var pg = require('pg');
-  var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/cattrack';
-  var client = new pg.Client(conString);
-  var gear_id_oranges = 'GALAXY Gear (7BDB)', gear_id_greyest = 'GALAXY Gear (9F2B)';
-  var trainData_oranges = [], trainData_greyest = [], testData = [];
-  var predictions = [];
+exports.predict = function (req, res) {
+    var pg = require('pg');
+    var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/cattrack';
+    var client = new pg.Client(conString);
+    var trainData = [];
+    var testData = [];
+    var predictions = [];
 
-  client.connect(function(err) {
-    if(err) {
-      return console.error('could not connect to postgres', err);
-    }
-    //TODO: change the fact, that we have two gears; either we have one device (keys) for now or we have multiple devices
-    // #
-    var query = 'select * from trainData1 where gear_id = \'' + gear_id_oranges + '\'';
-    client.query(query, function(err, result) {
-      if(err) {
-        return console.error('error running query', err);
-      }
-      trainData_oranges = result.rows;
-    });
-    // #
-    query = 'select * from trainData1 where gear_id = \'' + gear_id_greyest + '\'';
-    client.query(query, function(err, result) {
-      if(err) {
-        return console.error('error running query', err);
-      }
-      trainData_greyest = result.rows;
-    });
-    // #
-    var testPoint_oranges = {
-      "rssi_c24":0, 
-      "rssi_617":0, 
-      "rssi_230":0,
-    };
-    var testPoint_greyest = {
-      "rssi_c24":0, 
-      "rssi_617":0, 
-      "rssi_230":0,
-    };
-    query = 'select gear_id, rssi_c24, rssi_617, rssi_230, time from (select *, count(*) over (partition by time) as numTime from rssidataformatted) t where numTime = 2 order by time';
-    client.query(query, function(err, result) {
-      if(err) {
-        return console.error('error running query', err);
-      }
-      testData = result.rows;
-      var time = '';
-      for(var i in testData) {
-        if(time !== testData[i].time.toISOString()) {
-          time = testData[i].time.toISOString();
-          if(testData[i].gear_id === gear_id_oranges) {
-            testPoint_oranges.rssi_c24 = testData[i].rssi_c24;
-            testPoint_oranges.rssi_617 = testData[i].rssi_617;
-            testPoint_oranges.rssi_230 = testData[i].rssi_230;
-          } else if(testData[i].gear_id === gear_id_greyest) {
-            testPoint_greyest.rssi_c24 = testData[i].rssi_c24;
-            testPoint_greyest.rssi_617 = testData[i].rssi_617;
-            testPoint_greyest.rssi_230 = testData[i].rssi_230;
-          }
-        } else {
-          if(testData[i].gear_id === gear_id_oranges) {
-            testPoint_oranges.rssi_c24 = testData[i].rssi_c24;
-            testPoint_oranges.rssi_617 = testData[i].rssi_617;
-            testPoint_oranges.rssi_230 = testData[i].rssi_230;
-          } else if(testData[i].gear_id === gear_id_greyest) {
-            testPoint_greyest.rssi_c24 = testData[i].rssi_c24;
-            testPoint_greyest.rssi_617 = testData[i].rssi_617;
-            testPoint_greyest.rssi_230 = testData[i].rssi_230;
-          }
-          predictions.push({
-            "time":time,
-            "oranges":getLocation(testPoint_oranges, trainData_oranges),
-            "greyest":getLocation(testPoint_greyest, trainData_greyest)
-          });
+    client.connect(function (err) {
+        if (err) {
+            return console.error('could not connect to postgres', err);
         }
-      }
-      res.send(predictions);
-      client.end();
+        var query = 'select * from trainDataFinal';
+        client.query(query, function (err, result) {
+            if (err) {
+                return console.error('error running query', err);
+            }
+            trainData = result.rows;
+        });
+        query = 'select * from rssiData';
+        client.query(query, function (err, result) {
+            if (err) {
+                return console.error('error running query', err);
+            }
+            testData = result.rows;
+            //TODO: to change rssi names depending on database names
+            var testPoint = {
+                'rssi1': testData[0].rssi1,
+                'rssi2': testData[0].rssi2,
+                'rssi3': testData[0].rssi3
+            }
+            //check location with nearest neighbour algorithm
+            var location = getLocation(testPoint, trainData);
+            res.send(location);
+        });
     });
-
-       //!!change!!
-      //Alternative: we only have one row in testData 
-      //In this case we only call getLocation once for the values that are currently in the table rssiData
-      //and send back the result of the nearest neighbour algorithm
-    query = 'select gear_id, rssi_c24, rssi_617, rssi_230, time from rssiData';
-    client.query(query, function(err, result) {
-      if(err) {
-        return console.error('error running query', err);
-      }
-      testData = result.rows;
-
-      testPoint_oranges.rssi_c24 = testData[0].rssi_c24;
-      testPoint_oranges.rssi_617 = testData[0].rssi_617;
-      testPoint_oranges.rssi_230 = testData[0].rssi_230;
-
-      res.send(getLocation(testPoint_oranges, trainData_oranges));
-  });
-  });
 }
-
 var knn = require('alike');
 var knn_options = {
     k: 3,
     weights: {
-      "rssi_c24":0.33, 
-      "rssi_617":0.33, 
-      "rssi_230":0.33,
-      // "gear_id":0.25
+      "rssi1":0.33, 
+      "rssi2":0.33, 
+      "rssi3":0.33
     }
   };
   

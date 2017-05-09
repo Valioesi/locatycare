@@ -1,6 +1,6 @@
 exports.writeTrainData = function(req, res){
   var device_id = req.body.device_id || req.query.device_id;
-  var gear_id = req.body.gear_id || req.query.gear_id;
+  // var gear_id = req.body.gear_id || req.query.gear_id;
   var rssi = req.body.rssi || req.query.rssi;
   var location = req.body.location || req.query.location;
 
@@ -12,8 +12,8 @@ exports.writeTrainData = function(req, res){
     if(err) {
       return console.error('could not connect to postgres', err);
     }
-    //TODO: rename gear_id in code and database
-    var query = 'insert into trainData (device_id, gear_id, rssi, location, time) values (\''+device_id+'\', \''+gear_id+'\', '+rssi+ ', \'' +location+ '\', NOW());';
+    //TODO: delete gear_id in database
+    var query = 'insert into trainData (device_id, rssi, location, time) values (\''+device_id+'\', '+rssi+ ', \'' +location+ '\', NOW());';
     console.log(query);
     client.query(query, function(err, result) {
       if(err) {
