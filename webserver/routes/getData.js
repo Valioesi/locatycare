@@ -1,8 +1,9 @@
 exports.getData = function(req, res){
   var pg = require('pg');
-  var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
+  //var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
 
-  var client = new pg.Client(conString);
+  var client = new pg.Client(DBconfig);
+
   client.connect(function(err) {
     if(err) {
       return console.error('could not connect to postgres', err);

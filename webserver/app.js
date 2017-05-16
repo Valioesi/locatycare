@@ -3,13 +3,20 @@
  * Module dependencies.
  */
 
-var express = require('express'), 
+var express = require('express'),
 cors = require('cors');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
 
 var app = express();
+
+var DBconfig = {
+    user: 'postgres',
+    password: 'password',
+    database: 'postgres',
+    host: 'localhost',
+}
 
 // all environments
 app.set('port', process.env.PORT || 3000);

@@ -5,9 +5,9 @@ exports.writeData = function(req, res){
 
   var pg = require('pg');
   // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
-  var conString = 'postgres://localhost:5432/postgres';
+  // var conString = 'postgres://localhost:5432/postgres';
 
-  var client = new pg.Client(conString);
+  var client = new pg.Client(DBconfig);
   client.connect(function(err) {
     if(err) {
       res.status(500).send('could not connect to postgres');
@@ -25,7 +25,7 @@ exports.writeData = function(req, res){
       if(err) {
         return console.error('error running query', err);
       }
-     
+
       client.end();
       res.status(200).send(query);
     });
