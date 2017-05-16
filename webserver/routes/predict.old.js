@@ -1,10 +1,10 @@
 /*
-  this file was previously predict.js in the cattracking project
+  this file was previously predict.js in the postgresing project
 */
 
 exports.predict = function(req, res){
   var pg = require('pg');
-  var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/cattrack';
+  var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
   var client = new pg.Client(conString);
   var gear_id_oranges = 'GALAXY Gear (7BDB)', gear_id_greyest = 'GALAXY Gear (9F2B)';
   var trainData_oranges = [], trainData_greyest = [], testData = [];

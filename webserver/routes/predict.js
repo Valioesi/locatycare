@@ -1,6 +1,6 @@
 exports.predict = function (req, res) {
     var pg = require('pg');
-    var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/cattrack';
+    var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
     var client = new pg.Client(conString);
     var trainData = [];
     var testData = [];
@@ -13,7 +13,7 @@ exports.predict = function (req, res) {
             res.status(500).send('could not connect to postgres');
             return console.error('could not connect to postgres', err);
         }
-        var query = 'select * from trainDataFinal';
+        var query = 'select * from train_data_formatted';
         client.query(query, function (err, result) {
             if (err) {
                 res.status(500).send('error running query');
@@ -21,7 +21,7 @@ exports.predict = function (req, res) {
             }
             trainData = result.rows;
         });
-        query = 'select * from rssiData';
+        query = 'select * from rssi_data';
         client.query(query, function (err, result) {
             if (err) {
                 res.status(500).send('error running query');

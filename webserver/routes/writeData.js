@@ -4,8 +4,8 @@ exports.writeData = function(req, res){
   var rssi = req.body.rssi || req.query.rssi;
 
   var pg = require('pg');
-  // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/cattrack';
-  var conString = 'postgres://localhost:5432/cattrack';
+  // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
+  var conString = 'postgres://localhost:5432/postgres';
 
   var client = new pg.Client(conString);
   client.connect(function(err) {
@@ -19,7 +19,7 @@ exports.writeData = function(req, res){
     // var query = 'insert into rssiData (device_id, gear_id, rssi, time) values (\''+device_id+'\', \''+gear_id+'\', '+rssi+', NOW());'
     // !!Change!!
     //new code, which only updates the one row; only the appropriate (depending on the device) is updated
-    var query = 'UPDATE rssiData SET '+device_id+' = '+rssi+', time = NOW()';
+    var query = 'UPDATE rssi_data SET '+device_id+' = '+rssi+', time = NOW()';
     console.log(query);
     client.query(query, function(err, result) {
       if(err) {
