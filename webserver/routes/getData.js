@@ -7,7 +7,7 @@ exports.getData = function(req, res){
     if(err) {
       return console.error('could not connect to postgres', err);
     }
-    var query = 'select * from rssiData order by time desc limit 10;'
+    var query = 'select * from rssi_data order by time desc limit 10;'
     console.log(query);
     client.query(query, function(err, result) {
       if(err) {
