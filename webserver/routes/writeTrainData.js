@@ -27,7 +27,7 @@ exports.writeTrainData = function(req, res){
       }
       // console.log(result);
       client.end();
-      res.status(200).send(query);
+      res.status(200).send('Inserted');
     });
   });
 };

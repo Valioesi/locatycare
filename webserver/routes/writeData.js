@@ -32,7 +32,7 @@ exports.writeData = function(req, res){
       }
 
       client.end();
-      res.status(200).send(query);
+      res.status(200).send('Updated');
     });
   });
 };
