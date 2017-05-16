@@ -1,7 +1,12 @@
 exports.predict = function (req, res) {
     var pg = require('pg');
     // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
-    var client = new pg.Client(DBconfig);
+    var client = new pg.Client({
+        user: 'postgres',
+        password: 'password',
+        database: 'postgres',
+        host: 'localhost',
+    });
 
     var trainData = [];
     var testData = [];

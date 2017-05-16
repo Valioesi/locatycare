@@ -5,9 +5,14 @@ exports.writeTrainData = function(req, res){
   var location = req.body.location || req.query.location;
 
   var pg = require('pg');
-  var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
+  // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
 
-  var client = new pg.Client(conString);
+  var client = new pg.Client({
+      user: 'postgres',
+      password: 'password',
+      database: 'postgres',
+      host: 'localhost',
+  });
   client.connect(function(err) {
     if(err) {
       res.status(500).send('could not connect to postgres');
