@@ -4,9 +4,16 @@ exports.writeTrainData = function(req, res){
   var rssi = req.body.rssi || req.query.rssi;
   var location = req.body.location || req.query.location;
 
-  var pg = require('pg');
-  // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
+  //map device id (mac address of pi) to corresponding name of column in database
+  if(device_id === '...'){
+    device_id = 'rssi_1';
+  }else if(device_id === '...'){
+    device_id = 'rssi_2';
+  }else{
+    device_id = 'rssi_3';
+  }
 
+  var pg = require('pg');
   var client = new pg.Client({
       user: 'postgres',
       password: 'password',
