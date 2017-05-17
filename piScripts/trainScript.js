@@ -1,6 +1,17 @@
 var noble = require('noble');
 var http = require('http');
+var mac = require('getmac');    // npm package to get mac address from own maschine
+var address = '';
 var location = 'Schreibtisch';
+
+//get mac address
+mac.getMac(function(err, macAddress){
+    if(err) {
+        console.log('Error getting mac address');
+    }else{
+        address = macAddress;
+    }
+});
 
 noble.on('stateChange', function(state) {
   if (state === 'poweredOn') {
@@ -16,9 +27,8 @@ noble.on('discover', function(peripheral) {
     console.log();
 
     //make call to REST API
-    //TODO: change device_id to this pi's id
     var body = JSON.stringify({
-        device_id : 'rssi_1',
+        device_id : address,
         rssi : peripheral.rssi,
         location : location
     });
