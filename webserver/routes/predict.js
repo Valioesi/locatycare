@@ -41,10 +41,17 @@ exports.predict = function (req, res) {
                 'rssi3': testData[0].rssi3
             }
             //check location with nearest neighbour algorithm
-            var location = {
-                'location': getLocation(testPoint, trainData)
-            };
-            res.status(200).send(location);
+            try {
+                var location = {
+                    'location': getLocation(testPoint, trainData)
+                };
+                res.status(200).send(location);
+            } catch (error) {
+                res.status(500).send({
+                    error: "Error calculating Location"
+                });
+            }
+
         });
     });
 }
