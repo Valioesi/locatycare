@@ -1,12 +1,8 @@
 'use strict';
-
+let http = require('http');
 /**
- * This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
- * The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well as
- * testing instructions are located at http://amzn.to/1LzFrj6
- *
- * For additional samples, visit the Alexa Skills Kit Getting Started guide at
- * http://amzn.to/1LGWsLG
+ * This is based on the Color Example of Alexa Skills Kit api.
+
  */
 
 
@@ -68,16 +64,17 @@ function handleSessionEndRequest(callback) {
 
     callback({}, buildSpeechletResponse(cardTitle, speechOutput, null, shouldEndSession));
 }
-
+/*
 function createFavoriteColorAttributes(favoriteColor) {
     return {
         favoriteColor,
     };
 }
-
+*/
 /**
  * Sets the color in the session and prepares the speech to reply to the user.
  */
+ /*
 function setColorInSession(intent, session, callback) {
     const cardTitle = intent.name;
     const favoriteColorSlot = intent.slots.Color;
@@ -127,6 +124,7 @@ function getColorFromSession(intent, session, callback) {
     callback(sessionAttributes,
          buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
 }
+*/
 
 function locateIntent(intent, session, callback){
     let locationOfIntent;
@@ -134,27 +132,58 @@ function locateIntent(intent, session, callback){
     const sessionAttributes = {};
     let shouldEndSession = false;
     let speechOutput = '';
+    
 
     //TODO: get location here 
+    var options = {
+        host: "ec2-34-250-153-150.eu-west-1.compute.amazonaws.com",
+        port: 3000,
+        path: `/predict?search=${intent.slots.Thing.value.toLowerCase()}`
+    };
+
+    http.request(options, function(response) {
+        console.log(response.statusCode)   
+        let body = '';
+
+        response.on('data', function(chunk){
+            body += chunk;
+        });
+
+        response.on('end', function(){
+            let json = JSON.parse(body);
+            console.log("answer: ",json)
+            
+            if(response.statusCode===200){
+                locationOfIntent = json.location
+                speechOutput = `Dein ${intent.slots.Thing.value} ist im ${locationOfIntent}.`;
+                shouldEndSession = true;
+            }else{
+                speechOutput = "Wir können dein "+ intent.slots.Thing.value +" gerade nicht finden. Frag später nochmal!";
+            }
+            callback(sessionAttributes,
+                buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+        });
+        
+      
     
-    if(intent.slots.Thing.value.toLowerCase()==="spray"){
-        locationOfIntent = "Kühlschrank";
-    }else if (intent.slots.Thing.value.toLowerCase()==="schlüssel"){
-        locationOfIntent = "Bett"
-    }
+        // if(intent.slots.Thing.value.toLowerCase()==="spray"){
+        //   locationOfIntent = "Kühlschrank";
+        // }else if (intent.slots.Thing.value.toLowerCase()==="schlüssel"){
+        //      locationOfIntent = "Bett"
+        // }
 
-    if (locationOfIntent) {
-        speechOutput = `Dein ${intent.slots.Thing.value} ist im ${locationOfIntent}.`;
-        shouldEndSession = true;
-    } else {
-        speechOutput = "Ich bin mir nicht sicher wo dein "+ intent.slots.Thing.value +" ist.";
-    }
 
-    // Setting repromptText to null signifies that we do not want to reprompt the user.
-    // If the user does not respond or says something that is not understood, the session
-    // will end.
-    callback(sessionAttributes,
-         buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+
+        // Setting repromptText to null signifies that we do not want to reprompt the user.
+        // If the user does not respond or says something that is not understood, the session
+        // will end.
+    
+
+    }).end();
+    
+    
+        
+
 }
 
 
