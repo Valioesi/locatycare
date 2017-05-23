@@ -4,9 +4,9 @@ exports.writeData = function(req, res){
   var rssi = req.body.rssi || req.query.rssi;
 
   //map device id (mac address of pi) to corresponding name of column in database
-  if(device_id === '...'){
+  if(device_id === 'b8:27:eb:5d:15:a4'){
     device_id = 'rssi_1';
-  }else if(device_id === '...'){
+  }else if(device_id === 'b8:27:eb:08:e9:1c'){
     device_id = 'rssi_2';
   }else{
     device_id = 'rssi_3';
