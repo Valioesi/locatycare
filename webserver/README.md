@@ -16,3 +16,11 @@ To run:
 `bower install`
 
 `node app.js`
+
+
+Mac Addresse:
+
+| Raspberry Pi | Mac Addresse |
+| ---          | ---          |
+| 1            | b8:27:eb:5d:15:a4 |
+| 2            | b8:27:eb:08:e9:1c |
