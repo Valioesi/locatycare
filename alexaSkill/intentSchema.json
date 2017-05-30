@@ -1,11 +1,107 @@
 {
   "intents": [
     {
-      "intent": "FindThing",
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "FindThing",
+      "samples": [
+        "wo sind meine {Thing}",
+        "wo ist mein {Thing}",
+        "finde meine {Thing}",
+        "find mein {Thing}",
+        "wo habe ich meine {Thing} liegen lassen"
+      ],
       "slots": [
         {
           "name": "Thing",
-          "type": "LIST_OF_SIGNS"
+          "type": "LIST_OF_THINGS",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "SetUser",
+      "samples": [
+        "ich bin {User}",
+        "hier spricht {User}"
+      ],
+      "slots": [
+        {
+          "name": "User",
+          "type": "LIST_OF_USERS",
+          "samples": ["Traussen"]
+        }
+      ]
+    }
+  ],
+  "types": [
+      {
+          "name": "LIST_OF_USERS",
+          "values":[
+              {
+                  "name":{
+                  "value":"Traussen"
+                  }
+              },
+              {
+                  "name":{
+                  "value":"Ostegaard"
+                  }
+              }
+              ]
+      },
+    {
+      "name": "LIST_OF_THINGS",
+      "values": [
+        {
+          "name": {
+            "value": "Schlüssel"
+          }
+        },
+        {
+          "name": {
+            "value": "Tabletten"
+          }
+        },
+        {
+          "name": {
+            "value": "Tablette"
+          }
+        },
+        {
+          "name": {
+            "value": "Schlüsselbund"
+          }
+        },
+        {
+          "name": {
+            "value": "Geldbeutel"
+          }
+        },
+        {
+          "name": {
+            "value": "Inhalator"
+          }
+        },
+        {
+          "name": {
+            "value": "Asthmaspray"
+          }
+        },
+        {
+          "name": {
+            "value": "Spray"
+          }
         }
       ]
     }

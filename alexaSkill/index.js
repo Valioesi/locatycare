@@ -1,5 +1,6 @@
 'use strict';
 let http = require('http');
+let ec2 = "ec2-52-51-231-52.eu-west-1.compute.amazonaws.com";
 /**
  * This is based on the Color Example of Alexa Skills Kit api.
 
@@ -134,19 +135,20 @@ function locateIntent(intent, session, callback){
     let speechOutput = '';
     
 
-    //TODO: get location here 
+    // get location here 
     var options = {
-        host: "ec2-34-250-153-150.eu-west-1.compute.amazonaws.com",
+        host: ec2,
         port: 3000,
         path: `/predict?search=${intent.slots.Thing.value.toLowerCase()}`
     };
-
+    console.log('beofre REQ')
     http.request(options, function(response) {
         console.log(response.statusCode)   
         let body = '';
 
         response.on('data', function(chunk){
             body += chunk;
+            console.log('data')
         });
 
         response.on('end', function(){
@@ -163,27 +165,65 @@ function locateIntent(intent, session, callback){
             callback(sessionAttributes,
                 buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
         });
+
         
-      
-    
-        // if(intent.slots.Thing.value.toLowerCase()==="spray"){
-        //   locationOfIntent = "Kühlschrank";
-        // }else if (intent.slots.Thing.value.toLowerCase()==="schlüssel"){
-        //      locationOfIntent = "Bett"
-        // }
-
-
-
-        // Setting repromptText to null signifies that we do not want to reprompt the user.
-        // If the user does not respond or says something that is not understood, the session
-        // will end.
-    
-
     }).end();
-    
-    
-        
+}
 
+//react to set user 
+function userIntent(intent, session, callback){
+    let locationOfIntent;
+    const repromptText = '';
+    const sessionAttributes = {};
+    let shouldEndSession = false;
+    let speechOutput = '';
+    
+
+    // get location here 
+    var options = {
+        host: ec2,
+        port: 3000,
+        path: `/registerUser?name=${intent.slots.User.value.toLowerCase()}`
+    };
+
+    http.request(options, function(response) {
+        console.log(response.statusCode)   
+        let body = '';
+
+        response.on('data', function(chunk){
+            body += chunk;
+        });
+
+        response.on('end', function(){
+            console.log("answer: ",body)
+            
+            if(response.statusCode===200){
+                if(intent.slots.User.value.toLowerCase()==="traussen"){
+                     speechOutput = `Hallo Herr ${intent.slots.User.value}!`;
+                }else if(intent.slots.User.value.toLowerCase()==="ostegaard"){
+                     speechOutput = `Hallo Frau ${intent.slots.User.value}!`;
+                }else{
+                    speechOutput = `Hallo! Leider kennen wir dich noch nicht.`
+                }
+                shouldEndSession = true;
+            }else{
+                speechOutput = "Wir können dein Benutzer gerade nicht einloggen oder finden. Frag später nochmal!";
+                shouldEndSession = true;
+            }
+            callback(sessionAttributes,
+                buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+        });
+        response.on('error', function(){
+            let json = JSON.parse(body);
+            console.log("answer: ",json)
+            
+            speechOutput = "Wir sind gerade offline. Sorry!";
+
+            callback(sessionAttributes,
+                buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+        });
+        
+    }).end();
 }
 
 
@@ -223,7 +263,10 @@ function onIntent(intentRequest, session, callback) {
         
     //} else if (intentName === 'WhatsMyColorIntent') {
     //    getColorFromSession(intent, session, callback);
-    } else if (intentName === 'AMAZON.HelpIntent') {
+    } else if (intentName==='SetUser'){
+         userIntent(intent, session, callback);
+    }
+    else if (intentName === 'AMAZON.HelpIntent') {
         getWelcomeResponse(callback);
     } else if (intentName === 'AMAZON.StopIntent' || intentName === 'AMAZON.CancelIntent') {
         handleSessionEndRequest(callback);

@@ -2,7 +2,7 @@ exports.registerUser = function (req, res) {
     var name = req.body.name || req.query.name;
 
     var userId;
-    if(name === 'Traussen'){
+    if(name === 'traussen'){
         userId = 1;
     }else{
         userId = 2;
