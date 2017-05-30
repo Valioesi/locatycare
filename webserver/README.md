@@ -8,6 +8,7 @@ API Calls:
 | post/get | /writeTrainData | device_id, rssi, location | Status Code |
 | post/get | /writeData | device_id, rssi | Status Code |
 | post/get | /predict | search | Status Code + location (e.g {location: "desk"}) |
+| post/get | /registerUser | name | Status Code |
 
 To run:
 

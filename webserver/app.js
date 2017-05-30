@@ -52,6 +52,11 @@ app.get('/getTrainData', cors(), getTrainDataRoute.getTrainData);
 var predictRoute = require('./routes/predict');
 app.post('/predict', cors(), predictRoute.predict);
 app.get('/predict', cors(), predictRoute.predict);
+
+var registerRoute = require('./routes/registerUser');
+app.post('/registerUser', cors(), registerRoute.registerUser);
+app.get('/registerUser', cors(), registerRoute.registerUser);
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
