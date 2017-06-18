@@ -11,6 +11,7 @@ exports.predict = function (req, res) {
     var trainData = [];
     var testData = [];
     var predictions = [];
+    var loggedInUser;
 
     var itemToLookFor = req.body.search || req.query.search;
 
@@ -19,6 +20,14 @@ exports.predict = function (req, res) {
             res.status(500).send('could not connect to postgres');
             return console.error('could not connect to postgres', err);
         }
+        //check which user is logged in
+        client.query('select user_id from registration', function (err, result) {
+            if (err) {
+                console.log('Error getting registered user');
+            } else {
+                loggedInUser = result;
+            }
+        })
         var query = 'select * from train_data_formatted';
         client.query(query, function (err, result) {
             if (err) {
@@ -45,6 +54,14 @@ exports.predict = function (req, res) {
                 var location = {
                     'location': getLocation(testPoint, trainData)
                 };
+                
+                //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
+                if(loggedInUser == 1){
+                    openhabRequest('PhillipsHue');
+                }else if(loggedInUser == 2){
+                    openhabRequest('Sonos');
+                }
+
                 res.status(200).send(location);
             } catch (error) {
                 res.status(500).send({
@@ -88,4 +105,28 @@ function getLocation(testPoint, trainData) {
         return maxLocation;
     else
         return knn_locations[0].location;
+}
+
+//function which sends request to REST Api of OpenHab, Parameter = the item (Sonos or Hue)
+function openhabRequest(itemPath){
+    var headers = new Headers({
+	'Content-Type': 'text/plain'
+    });
+
+    var options = {
+        method: 'POST',
+        body: 'ON',
+        headers: headers
+    };
+    
+    fetch('https://vali_schagerl@web.de:locatycare@myopenhab.org/rest/items/' + itemPath, options)
+    .then(function(response){
+        if(response == '200'){
+            console.log('OpenHab request successful');
+            return true;
+        }else{
+            console.log('OpenHab request not successful');            
+            return false;
+        }
+    });
 }
