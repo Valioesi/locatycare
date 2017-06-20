@@ -127,7 +127,7 @@ function openhabRequest(itemPath){
     var auth = "Basic " + new Buffer("grafjonas@web.de" + ":" + "locatycare").toString("base64");
     //TODO: change host after restart of server
     var options = {
-        host : 'https://home.myopenhab.org',
+        host : 'home.myopenhab.org',
         port : '443',
         path : '/rest/items/'+itemPath,
         method : 'POST',
