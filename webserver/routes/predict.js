@@ -1,4 +1,7 @@
+
+
 exports.predict = function (req, res) {
+    var fetch = require('node-fetch')
     var pg = require('pg');
     // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
     var client = new pg.Client({
@@ -123,7 +126,7 @@ function openhabRequest(itemPath){
         headers: headers
     };
     
-    fetch('https://grafjonas@web.de:locatycare@myopenhab.org/rest/items/' + itemPath, options)
+    fetch('https://grafjonas@web.de:locatycare@home.myopenhab.org/rest/items/Lampe1' + itemPath, options)
     .then(function(response){
         if(response == '200'){
             console.log('OpenHab request successful');
