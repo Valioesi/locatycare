@@ -64,7 +64,7 @@ exports.predict = function (req, res) {
                 
                 //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
                 // if(loggedInUser == 1){
-                    openhabRequest('Lamp1');
+                    openhabRequest('Lampe1');
                 // }else if(loggedInUser == 2){
                     // openhabRequest('Sonos');
                 // }
