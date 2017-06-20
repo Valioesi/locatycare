@@ -124,16 +124,17 @@ function openhabRequest(itemPath){
 
      //make call to REST API
     var body = "ON";
-
+    var auth = "Basic " + new Buffer("grafjonas@web.de" + ":" + "locatycare").toString("base64");
     //TODO: change host after restart of server
     var options = {
-        host : 'https://grafjonas@web.de:locatycare@home.myopenhab.org',
+        host : 'https://home.myopenhab.org',
         port : '443',
         path : '/rest/items/'+itemPath,
         method : 'POST',
         headers : {
             'Content-Type': 'plain/text',
-            'Content-Length': body.length
+            'Content-Length': body.length,
+             "Authorization" : auth
         }
     };
 
