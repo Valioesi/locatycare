@@ -128,6 +128,7 @@ function openhabRequest(itemPath){
     //TODO: change host after restart of server
     var options = {
         host : 'https://grafjonas@web.de:locatycare@home.myopenhab.org',
+        port : '443',
         path : '/rest/items/'+itemPath,
         method : 'POST',
         headers : {
