@@ -51,8 +51,12 @@ exports.predict = function (req, res) {
             }
             //check location with nearest neighbour algorithm
             try {
-                var location = {
+               /* var location = {
                     'location': getLocation(testPoint, trainData)
+                };*/
+
+                var location = {
+                    'location': 'auf dem Schreibtisch'
                 };
                 
                 //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
@@ -130,3 +134,4 @@ function openhabRequest(itemPath){
         }
     });
 }
+
