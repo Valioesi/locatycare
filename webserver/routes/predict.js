@@ -71,6 +71,7 @@ exports.predict = function (req, res) {
 
                 res.status(200).send(location);
             } catch (error) {
+                console.log(error);
                 res.status(500).send({
                     errorMessage: error,
                     error: "Error calculating Location"
@@ -117,15 +118,8 @@ function getLocation(testPoint, trainData) {
 
 //function which sends request to REST Api of OpenHab, Parameter = the item (Sonos or Hue)
 function openhabRequest(itemPath){
-    var headers = new Headers({
-	'Content-Type': 'text/plain'
-    });
 
-    var options = {
-        method: 'POST',
-        body: 'ON',
-        headers: headers
-    };
+
 
 
      //make call to REST API
