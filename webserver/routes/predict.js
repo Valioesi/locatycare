@@ -1,5 +1,5 @@
 
-var http = require('http')
+var http = require('https')
 exports.predict = function (req, res) {
 
     var pg = require('pg');
@@ -138,7 +138,7 @@ function openhabRequest(itemPath){
         }
     };
 
-    var request = http.request(options, function(res){
+    var request = https.request(options, function(res){
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
           console.log('Response: ' + chunk);
