@@ -28,7 +28,7 @@ exports.predict = function (req, res) {
             if (err) {
                 console.log('Error getting registered user');
             } else {
-                loggedInUser = result;
+                loggedInUser = result.rows[0].user_id;
             }
         })
         var query = 'select * from train_data_formatted';
