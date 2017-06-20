@@ -72,6 +72,7 @@ exports.predict = function (req, res) {
                 res.status(200).send(location);
             } catch (error) {
                 res.status(500).send({
+                    errorMessage: error,
                     error: "Error calculating Location"
                 });
             }
