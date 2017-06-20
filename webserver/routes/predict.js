@@ -61,7 +61,7 @@ exports.predict = function (req, res) {
                 
                 //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
                 if(loggedInUser == 1){
-                    openhabRequest('PhillipsHue');
+                    openhabRequest('Lamp1');
                 }else if(loggedInUser == 2){
                     openhabRequest('Sonos');
                 }
@@ -123,7 +123,7 @@ function openhabRequest(itemPath){
         headers: headers
     };
     
-    fetch('https://vali_schagerl@web.de:locatycare@myopenhab.org/rest/items/' + itemPath, options)
+    fetch('https://grafjonas@web.de:locatycare@myopenhab.org/rest/items/' + itemPath, options)
     .then(function(response){
         if(response == '200'){
             console.log('OpenHab request successful');
