@@ -1,7 +1,7 @@
 
 
 exports.predict = function (req, res) {
-    var fetch = require('http')
+    var http = require('http')
     var pg = require('pg');
     // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
     var client = new pg.Client({
