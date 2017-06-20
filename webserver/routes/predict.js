@@ -132,7 +132,7 @@ function openhabRequest(itemPath){
         path : '/rest/items/'+itemPath,
         method : 'POST',
         headers : {
-            'Content-Type': 'plain/text',
+            'Content-Type': 'text/plain',
             'Content-Length': body.length,
              "Authorization" : auth
         }
