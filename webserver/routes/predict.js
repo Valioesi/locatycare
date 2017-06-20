@@ -1,5 +1,5 @@
 
-var http = require('https')
+var https = require('https')
 exports.predict = function (req, res) {
 
     var pg = require('pg');
