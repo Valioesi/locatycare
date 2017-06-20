@@ -1,7 +1,7 @@
 
 
 exports.predict = function (req, res) {
-    var fetch = require('node-fetch')
+    var fetch = require('http')
     var pg = require('pg');
     // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
     var client = new pg.Client({
@@ -126,16 +126,42 @@ function openhabRequest(itemPath){
         body: 'ON',
         headers: headers
     };
-    
-    fetch('https://grafjonas@web.de:locatycare@home.myopenhab.org/rest/items/Lampe1' + itemPath, options)
-    .then(function(response){
-        if(response == '200'){
-            console.log('OpenHab request successful');
-            return true;
-        }else{
-            console.log('OpenHab request not successful');            
-            return false;
+
+
+     //make call to REST API
+    var body = "ON";
+
+    //TODO: change host after restart of server
+    var options = {
+        host : 'https://grafjonas@web.de:locatycare@home.myopenhab.org',
+        port : '80',
+        path : '/rest/items/'+itemPath,
+        method : 'POST',
+        headers : {
+            'Content-Type': 'plain/text',
+            'Content-Length': body.length
         }
+    };
+
+    var request = http.request(options, function(res){
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+          console.log('Response: ' + chunk);
+      });
     });
+
+    request.write(body);
+    request.end();
+    
+    // fetch('https://grafjonas@web.de:locatycare@home.myopenhab.org/rest/items/Lampe1' + itemPath, options)
+    // .then(function(response){
+    //     if(response == '200'){
+    //         console.log('OpenHab request successful');
+    //         return true;
+    //     }else{
+    //         console.log('OpenHab request not successful');            
+    //         return false;
+    //     }
+    // });
 }
 
