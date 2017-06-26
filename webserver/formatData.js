@@ -12,11 +12,11 @@ client.connect(function(err) {
       return console.error('could not connect to postgres', err);
     }
     //new code, which only updates the one row; only the appropriate (depending on the device) is updated
-    var query1 = 'SELECT * FROM train_data WHERE device_id = rssi_1;'
+    var query1 = 'SELECT * FROM train_data WHERE device_id = "rssi_1";'
 
-    var query2 = 'SELECT * FROM train_data WHERE device_id = rssi_2;'
+    var query2 = 'SELECT * FROM train_data WHERE device_id = "rssi_2";'
 
-    var query3 = 'SELECT * FROM train_data WHERE device_id = rssi_3;'
+    var query3 = 'SELECT * FROM train_data WHERE device_id = "rssi_3";'
 
     var result1, result2, result3;
 
