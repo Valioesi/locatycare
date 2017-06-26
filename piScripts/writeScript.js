@@ -1,57 +1,60 @@
 var noble = require('noble');
 var http = require('http');
-var mac = require('getmac');    // npm package to get mac address from own maschine
+var mac = require('getmac'); // npm package to get mac address from own maschine
 var address = '';
 
 //get mac address
-mac.getMac(function(err, macAddress){
-    if(err) {
+mac.getMac(function (err, macAddress) {
+    if (err) {
         console.log('Error getting mac address');
-    }else{
+    } else {
         address = macAddress;
     }
 });
 
-noble.on('stateChange', function(state) {
-  if (state === 'poweredOn') {
-      setInterval(function() { 
-        noble.startScanning();   
-      }, 20000);
-  } else {
-    noble.stopScanning();
-  }
+noble.on('stateChange', function (state) {
+    if (state === 'poweredOn') {
+        setInterval(function () {
+            noble.startScanning();
+        }, 20000);
+    } else {
+        noble.stopScanning();
+    }
 });
 
-noble.on('discover', function(peripheral) {
-    console.log('Found device with local name: ' + peripheral.advertisement.localName);
-    console.log('advertising the following service uuid\'s: ' + peripheral.advertisement.serviceUuids);
-    console.log();
+noble.on('discover', function (peripheral) {
+    if (peripheral.id == "00ea24407984") {
 
-    //make call to REST API
-    var body = JSON.stringify({
-        device_id : address,
-        rssi : peripheral.rssi,
-    });
+        console.log('Found device with local name: ' + peripheral.advertisement.localName);
+        console.log('advertising the following service uuid\'s: ' + peripheral.advertisement.serviceUuids);
+        console.log();
 
-    //TODO: change host after restart of server
-    var options = {
-        host : 'http://ec2-34-252-244-185.eu-west-1.compute.amazonaws.com',
-        port : '3000',
-        path : '/writeData',
-        method : 'POST',
-        headers : {
-            'Content-Type': 'application/json',
-            'Content-Length': body.length
-        }
-    };
+        //make call to REST API
+        var body = JSON.stringify({
+            device_id: address,
+            rssi: peripheral.rssi,
+        });
 
-    var request = http.request(options, function(res){
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
-      });
-    });
+        //TODO: change host after restart of server
+        var options = {
+            host: 'http://ec2-34-252-244-185.eu-west-1.compute.amazonaws.com',
+            port: '3000',
+            path: '/writeData',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': body.length
+            }
+        };
 
-    request.write(body);
-    request.end();
+        var request = http.request(options, function (res) {
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                console.log('Response: ' + chunk);
+            });
+        });
+
+        request.write(body);
+        request.end();
+    }
 });
