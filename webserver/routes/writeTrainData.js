@@ -26,7 +26,7 @@ exports.writeTrainData = function(req, res){
       return console.error('could not connect to postgres', err);
     }
     //TODO: delete gear_id in database
-    var query = 'insert into trainData (device_id, rssi, location, time) values (\''+device_id+'\', '+rssi+ ', \'' +location+ '\', NOW());';
+    var query = 'insert into train_data (device_id, rssi, location, time) values (\''+device_id+'\', '+rssi+ ', \'' +location+ '\', NOW());';
     console.log(query);
     client.query(query, function(err, result) {
       if(err) {
