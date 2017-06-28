@@ -52,13 +52,14 @@ exports.predict = function (req, res) {
                 rssi2Array.push(result.rows[i].rssi_2);
                 rssi3Array.push(result.rows[i].rssi_3);
             }
-
+            
             //now we get the median from rssi_1, rssi_2, rssi_3 and add it to testPoint
             var testPoint = {
                 'rssi_1': average(rssi1Array),
                 'rssi_2': average(rssi2Array),
                 'rssi_3': average(rssi3Array)
             }
+            console.log("Averages: "+ testPoint);
             //check location with nearest neighbour algorithm
             try {
                 var location = {
