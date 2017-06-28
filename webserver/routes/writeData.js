@@ -45,7 +45,7 @@ exports.writeData = function(req, res) {
         data.rssi_2 +
         "," +
         data.rssi_3 +
-        ",time = NOW());";
+        ",NOW());";
       console.log(query);
       client.query(query, function(err, result) {
         if (err) {
