@@ -9,17 +9,20 @@ exports.writeData = function(req, res) {
   if (device_id === "b8:27:eb:5d:15:a4") {
     // device_id = "rssi_1";
     data.rssi_1 = rssi;
+    console.log("received from pi 1");
   } else if (device_id === "b8:27:eb:08:e9:1c") {
     // device_id = "rssi_2";
 
     data.rssi_2 = rssi;
+    console.log("received from pi 2");
   } else {
     // device_id = "rssi_3";
     data.rssi_3 = rssi;
+    console.log("received from pi 3");
   }
 
-  if (data.rssi_3&& data.rssi_2 && data.rssi_1) {
-    console.log('received all 3 updating...', data)
+  if (data.rssi_3 && data.rssi_2 && data.rssi_1) {
+    console.log("received all 3 updating...", data);
     var pg = require("pg");
     var client = new pg.Client({
       user: "postgres",
@@ -51,8 +54,8 @@ exports.writeData = function(req, res) {
 
         client.end();
         res.status(200).send("Updated");
+        data = { rssi_1: false, rssi_2: false, rssi_3: false };
       });
     });
-    data = { rssi_1: false, rssi_2: false, rssi_3: false };
   }
 };
