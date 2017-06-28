@@ -69,10 +69,20 @@ exports.predict = function (req, res) {
                 
                 //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
                 console.log("logged in user: ",loggedInUser)
-                if(loggedInUser == 1){
-                    openhabRequest('Lampe1');
-                }else if(loggedInUser == 2){
+                if(loggedInUser == 2){
+                    
+                    if(location.location==="Schreibtisch"){
+                        openhabRequest('Lampe1');
+                    }else if(location.location==="Regal"){
+                         openhabRequest('Lampe2');
+                    }else if(location.location==="Blauer Stuhl"){
+                         openhabRequest('Lampe3');
+                    }
+
+                }else if(loggedInUser == 1){
+                    if(location.location==="Regal"){
                     openhabRequest('play_uri_switch');
+                    }
                 }
 
                 res.status(200).send(location);
