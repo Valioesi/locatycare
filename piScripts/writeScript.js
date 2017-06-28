@@ -56,5 +56,8 @@ noble.on('discover', function (peripheral) {
 
         request.write(body);
         request.end();
+    }else{
+        console.log('Our XY not found, but...');
+        console.log('Found device with local name: ' + peripheral.advertisement.localName);
     }
 });

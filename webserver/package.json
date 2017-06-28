@@ -6,11 +6,12 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "alike": "~1.2.0",
+    "cors": "~2.1.0",
     "express": "3.x",
     "jade": "*",
-    "pg": "~3.0.3",
-    "cors": "~2.1.0",
+    "mathjs": "^3.13.3",
     "moment": "~2.4.0",
-    "alike": "~1.2.0"
+    "pg": "~3.0.3"
   }
 }
