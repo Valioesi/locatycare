@@ -47,9 +47,9 @@ exports.predict = function (req, res) {
             }
             testData = result.rows;
             var testPoint = {
-                'rssi1': testData[0].rssi_1,
-                'rssi2': testData[0].rssi_2,
-                'rssi3': testData[0].rssi_3
+                'rssi_1': testData[0].rssi_1,
+                'rssi_2': testData[0].rssi_2,
+                'rssi_3': testData[0].rssi_3
             }
             //check location with nearest neighbour algorithm
             try {
@@ -82,9 +82,9 @@ var knn = require('alike');
 var knn_options = {
     k: 3,
     weights: {
-        "rssi1": 0.33,
-        "rssi2": 0.33,
-        "rssi3": 0.33
+        "rssi_1": 0.33,
+        "rssi_2": 0.33,
+        "rssi_3": 0.33
     }
 };
 
