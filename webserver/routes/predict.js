@@ -3,6 +3,7 @@ var https = require('https')
 exports.predict = function (req, res) {
 
     var pg = require('pg');
+    var math = require('mathjs');
     // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
     var client = new pg.Client({
         user: 'postgres',
@@ -55,9 +56,9 @@ exports.predict = function (req, res) {
             
             //now we get the median from rssi_1, rssi_2, rssi_3 and add it to testPoint
             var testPoint = {
-                'rssi_1': average(rssi1Array),
-                'rssi_2': average(rssi2Array),
-                'rssi_3': average(rssi3Array)
+                'rssi_1': math.mean(rssi1Array),
+                'rssi_2': math.mean(rssi2Array),
+                'rssi_3': math.mean(rssi3Array)
             }
             console.log("Averages: ", testPoint);
             //check location with nearest neighbour algorithm
@@ -165,21 +166,3 @@ function openhabRequest(itemPath){
     // });
 }
 
-//function to calculate median
-function median(values) {
-
-    values.sort( function(a,b) {return a - b;} );
-
-    var half = Math.floor(values.length/2);
-
-    if(values.length % 2 == 0)
-        return (values[half-1] + values[half]) / 2.0;
-    else
-        return values[half];
-}
-
-//function to calculate average
-function average(values){
-    let sum = values.reduce((previous, current) => current += previous);
-    return sum / values.length;
-}
