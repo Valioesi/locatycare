@@ -39,13 +39,13 @@ exports.writeData = function(req, res) {
       // var query =
       //   "UPDATE rssi_data SET " + device_id + " = " + rssi + ", time = NOW()";
       var query =
-        "INSERT INTO rssi_data  (rssi_1,rssi_2,rssi_3) values  (" +
+        "INSERT INTO rssi_data  (rssi_1,rssi_2,rssi_3,time) values  (" +
         data.rssi_1 +
         "," +
         data.rssi_2 +
         "," +
         data.rssi_3 +
-        ");";
+        ",time = NOW());";
       console.log(query);
       client.query(query, function(err, result) {
         if (err) {
@@ -55,6 +55,22 @@ exports.writeData = function(req, res) {
         client.end();
         res.status(200).send("Updated");
         data = { rssi_1: false, rssi_2: false, rssi_3: false };
+
+        var query2 = "SELECT * FROM rssi_data;";
+        client.query(query2, function(err, result) {
+          if (err) {
+            return console.error("error running query", err);
+          }
+          if (result.rows.length === 10) {
+            var query3 =
+              "DELETE FROM rssi_data WHERE ctid IN (SELECT ctid FROM rssi_data ORDER BY time limit 1);";
+            client.query(query, function(err, result) {
+              if (err) {
+                return console.error("error running query", err);
+              }
+            });
+          }
+        });
       });
     });
   }
