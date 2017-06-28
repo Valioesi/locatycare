@@ -44,7 +44,7 @@ client.connect(function (err) {
         }
         result3 = result.rows;
         console.log(result1.length, result2.length, result3.length);
-        for (var i = 0; i < 22; i++) {
+        for (var i = 0; i < 21; i++) {
           var insertQuery = "INSERT INTO train_data_formatted (rssi1, rssi2, rssi3, location) VALUES (" + result1[i].rssi + ", " + result2[i].rssi + ", " + result3[i].rssi + ", " + result1[i].location +")";
           client.query(insertQuery, function(err, result){
             if(err){
