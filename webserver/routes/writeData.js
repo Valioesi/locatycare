@@ -7,18 +7,19 @@ exports.writeData = function(req, res) {
 
   //map device id (mac address of pi) to corresponding name of column in database
   if (device_id === "b8:27:eb:5d:15:a4") {
-    device_id = "rssi_1";
+    // device_id = "rssi_1";
     data.rssi_1 = rssi;
   } else if (device_id === "b8:27:eb:08:e9:1c") {
-    device_id = "rssi_2";
+    // device_id = "rssi_2";
 
     data.rssi_2 = rssi;
   } else {
-    device_id = "rssi_3";
+    // device_id = "rssi_3";
     data.rssi_3 = rssi;
   }
 
   if (data.rssi_3&& data.rssi_2 && data.rssi_1) {
+    console.log('received all 3 updating...', data)
     var pg = require("pg");
     var client = new pg.Client({
       user: "postgres",
