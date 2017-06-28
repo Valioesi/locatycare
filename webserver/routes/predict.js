@@ -59,7 +59,7 @@ exports.predict = function (req, res) {
                 'rssi_2': average(rssi2Array),
                 'rssi_3': average(rssi3Array)
             }
-            console.log("Averages: "+ testPoint);
+            console.log("Averages: ", testPoint);
             //check location with nearest neighbour algorithm
             try {
                 var location = {
