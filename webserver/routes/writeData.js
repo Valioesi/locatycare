@@ -1,4 +1,4 @@
-var data = { rssi_1: undefined, rssi_1: undefined, rssi_3: undefined };
+var data = { rssi_1: false, rssi_1: false, rssi_3: false };
 
 exports.writeData = function(req, res) {
   var device_id = req.body.device_id || req.query.device_id;
@@ -18,35 +18,40 @@ exports.writeData = function(req, res) {
     data.rssi_3 = rssi;
   }
 
-  if (data.rssi_3 && data.rssi_2 && data.rssi_1){
-
-  var pg = require("pg");
-  var client = new pg.Client({
-    user: "postgres",
-    password: "password",
-    database: "postgres",
-    host: "localhost"
-  });
-  client.connect(function(err) {
-    if (err) {
-      res.status(500).send("could not connect to postgres");
-      return console.error("could not connect to postgres", err);
-    }
-    //new code, which only updates the one row; only the appropriate (depending on the device) is updated
-    // var query =
-    //   "UPDATE rssi_data SET " + device_id + " = " + rssi + ", time = NOW()";
-         var query =
-     "INSERT INTO rssi_data  (rssi_1,rssi_2,rssi_3) values  ("+data.rssi_1+","+data.rssi_2+","+data.rssi_3+");";
-    console.log(query);
-    client.query(query, function(err, result) {
-      if (err) {
-        return console.error("error running query", err);
-      }
-
-      client.end();
-      res.status(200).send("Updated");
+  if (data.rssi_3&& data.rssi_2 && data.rssi_1) {
+    var pg = require("pg");
+    var client = new pg.Client({
+      user: "postgres",
+      password: "password",
+      database: "postgres",
+      host: "localhost"
     });
-  });
-  data = { rssi_1: undefined, rssi_1: undefined, rssi_3: undefined };
+    client.connect(function(err) {
+      if (err) {
+        res.status(500).send("could not connect to postgres");
+        return console.error("could not connect to postgres", err);
+      }
+      //new code, which only updates the one row; only the appropriate (depending on the device) is updated
+      // var query =
+      //   "UPDATE rssi_data SET " + device_id + " = " + rssi + ", time = NOW()";
+      var query =
+        "INSERT INTO rssi_data  (rssi_1,rssi_2,rssi_3) values  (" +
+        data.rssi_1 +
+        "," +
+        data.rssi_2 +
+        "," +
+        data.rssi_3 +
+        ");";
+      console.log(query);
+      client.query(query, function(err, result) {
+        if (err) {
+          return console.error("error running query", err);
+        }
+
+        client.end();
+        res.status(200).send("Updated");
+      });
+    });
+    data = { rssi_1: false, rssi_2: false, rssi_3: false };
   }
 };
