@@ -12,7 +12,6 @@ exports.predict = function (req, res) {
     });
 
     var trainData = [];
-    var testData = [];
     var predictions = [];
     var loggedInUser;
 
@@ -56,9 +55,9 @@ exports.predict = function (req, res) {
 
             //now we get the median from rssi_1, rssi_2, rssi_3 and add it to testPoint
             var testPoint = {
-                'rssi_1': median(rssi1Array),
-                'rssi_2': median(rssi2Array),
-                'rssi_3': median(rssi3Array)
+                'rssi_1': average(rssi1Array),
+                'rssi_2': average(rssi2Array),
+                'rssi_3': average(rssi3Array)
             }
             //check location with nearest neighbour algorithm
             try {
@@ -176,4 +175,10 @@ function median(values) {
         return (values[half-1] + values[half]) / 2.0;
     else
         return values[half];
+}
+
+//function to calculate average
+function average(values){
+    let sum = values.reduce((previous, current) => current += previous);
+    return sum / values.length;
 }
