@@ -52,7 +52,7 @@ exports.writeData = function(req, res) {
           return console.error("error running query", err);
         }
 
-        client.end();
+        
         res.status(200).send("Updated");
         data = { rssi_1: false, rssi_2: false, rssi_3: false };
 
@@ -64,11 +64,14 @@ exports.writeData = function(req, res) {
           if (result.rows.length === 10) {
             var query3 =
               "DELETE FROM rssi_data WHERE ctid IN (SELECT ctid FROM rssi_data ORDER BY time limit 1);";
-            client.query(query, function(err, result) {
+            client.query(query3, function(err, result) {
               if (err) {
                 return console.error("error running query", err);
               }
+              client.end();
             });
+          }else{
+            client.end();
           }
         });
       });
