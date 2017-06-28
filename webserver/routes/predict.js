@@ -46,28 +46,24 @@ exports.predict = function (req, res) {
                 return console.error('error running query', err);
             }
             testData = result.rows;
-            //TODO: to change rssi names depending on database names
             var testPoint = {
-                'rssi1': testData[0].rssi1,
-                'rssi2': testData[0].rssi2,
-                'rssi3': testData[0].rssi3
+                'rssi1': testData[0].rssi_1,
+                'rssi2': testData[0].rssi_2,
+                'rssi3': testData[0].rssi_3
             }
             //check location with nearest neighbour algorithm
             try {
-               /* var location = {
-                    'location': getLocation(testPoint, trainData)
-                };*/
-
                 var location = {
-                    'location': 'auf dem Schreibtisch'
+                    'location': getLocation(testPoint, trainData)
                 };
+
                 
                 //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
                 console.log("logged in user: ",loggedInUser)
                 if(loggedInUser == 1){
                     openhabRequest('Lampe1');
                 }else if(loggedInUser == 2){
-                     openhabRequest('play_uri_switch');
+                    openhabRequest('play_uri_switch');
                 }
 
                 res.status(200).send(location);
@@ -126,7 +122,6 @@ function openhabRequest(itemPath){
      //make call to REST API
     var body = "ON";
     var auth = "Basic " + new Buffer("grafjonas@web.de" + ":" + "locatycare").toString("base64");
-    //TODO: change host after restart of server
     var options = {
         host : 'home.myopenhab.org',
         port : '443',
