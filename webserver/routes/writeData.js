@@ -61,9 +61,9 @@ exports.writeData = function(req, res) {
           if (err) {
             return console.error("error running query", err);
           }
-          if (result.rows.length === 10) {
+          if (result.rows.length >=10) {
             var query3 =
-              "DELETE FROM rssi_data WHERE ctid IN (SELECT ctid FROM rssi_data ORDER BY time limit 1);";
+              "DELETE FROM rssi_data WHERE ctid IN (SELECT ctid FROM rssi_data ORDER BY time asc limit 1);";
             client.query(query3, function(err, result) {
               if (err) {
                 return console.error("error running query", err);
