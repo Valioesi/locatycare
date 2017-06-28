@@ -71,12 +71,12 @@ exports.predict = function(req, res) {
           if (location.location === "Schreibtisch") {
             openhabRequest("Lampe1", "ON");
             setTimeout(function() {
-              openhabRequest("Lampe3", "OFF");
+              openhabRequest("Lampe1", "OFF");
             }, 30000);
           } else if (location.location === "Regal") {
             openhabRequest("Lampe2", "ON");
             setTimeout(function() {
-              openhabRequest("Lampe3", "OFF");
+              openhabRequest("Lampe2", "OFF");
             }, 30000);
           } else if (location.location === "Blauer Stuhl") {
             openhabRequest("Lampe3", "ON");
