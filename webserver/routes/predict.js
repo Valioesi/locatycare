@@ -56,9 +56,15 @@ exports.predict = function (req, res) {
 
             //now we get the median from rssi_1, rssi_2, rssi_3 and add it to testPoint
             var testPoint = {
+<<<<<<< HEAD
                 'rssi1': median(rssi1Array),
                 'rssi2': median(rssi2Array),
                 'rssi3': median(rssi3Array)
+=======
+                'rssi_1': testData[0].rssi_1,
+                'rssi_2': testData[0].rssi_2,
+                'rssi_3': testData[0].rssi_3
+>>>>>>> 103d9e442dfb04f3a8b440f4d01ca4f9b3c23767
             }
             //check location with nearest neighbour algorithm
             try {
@@ -91,9 +97,9 @@ var knn = require('alike');
 var knn_options = {
     k: 3,
     weights: {
-        "rssi1": 0.33,
-        "rssi2": 0.33,
-        "rssi3": 0.33
+        "rssi_1": 0.33,
+        "rssi_2": 0.33,
+        "rssi_3": 0.33
     }
 };
 
