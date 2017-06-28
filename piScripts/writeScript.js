@@ -16,7 +16,7 @@ noble.on('stateChange', function (state) {
     if (state === 'poweredOn') {
         setInterval(function () {
             noble.startScanning();
-        }, 20000);
+        }, process.argv[2]);
     } else {
         noble.stopScanning();
     }
