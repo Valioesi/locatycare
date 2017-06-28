@@ -56,15 +56,9 @@ exports.predict = function (req, res) {
 
             //now we get the median from rssi_1, rssi_2, rssi_3 and add it to testPoint
             var testPoint = {
-<<<<<<< HEAD
                 'rssi1': median(rssi1Array),
                 'rssi2': median(rssi2Array),
                 'rssi3': median(rssi3Array)
-=======
-                'rssi_1': testData[0].rssi_1,
-                'rssi_2': testData[0].rssi_2,
-                'rssi_3': testData[0].rssi_3
->>>>>>> 103d9e442dfb04f3a8b440f4d01ca4f9b3c23767
             }
             //check location with nearest neighbour algorithm
             try {
@@ -178,7 +172,7 @@ function median(values) {
 
     var half = Math.floor(values.length/2);
 
-    if(values.length % 2)
+    if(values.length % 2 == 0)
         return (values[half-1] + values[half]) / 2.0;
     else
         return values[half];
