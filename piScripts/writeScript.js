@@ -37,7 +37,7 @@ noble.on('discover', function (peripheral) {
 
         //TODO: change host after restart of server
         var options = {
-            host: 'http://ec2-34-252-244-185.eu-west-1.compute.amazonaws.com',
+            host: 'ec2-user@ec2-54-77-55-113.eu-west-1.compute.amazonaws.com',
             port: '3000',
             path: '/writeData',
             method: 'POST',
