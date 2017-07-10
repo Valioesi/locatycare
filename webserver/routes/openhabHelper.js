@@ -69,6 +69,6 @@ exports.openhabLightNotification = function(device) {
     setTimeout(function() {
       console.log("openhab reset request to",device)
       exports.openhabRequest(device, item.state);
-    }, notificationTimeout).bind(item);
+    }.bind(item), notificationTimeout);
   });
 };
