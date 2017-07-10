@@ -64,11 +64,12 @@ var openhabItemRequest = function(itemPath, callback) {
 exports.openhabLightNotification = function(device) {
   // TODO: to make it work with colors reconfigure Switches in OpenHAB as Color not Switch then send 0,0,0 etc. to the light for HSB
   openhabItemRequest(device, function(item) {
-    console.log("openhab notif request to ",device, item)
+    var json = JSON.parse(item);
+    console.log("openhab notif request to ",device, json.item)
     exports.openhabRequest(device, "280,100,100");
     setTimeout(function() {
-      console.log("openhab reset request to",device,item.state)
-      exports.openhabRequest(device, item.state);
-    }, notificationTimeout,item);
+      console.log("openhab reset request to",device,json.state)
+      exports.openhabRequest(device, json.state);
+    }, notificationTimeout,json);
   });
 };
