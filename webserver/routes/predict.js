@@ -34,7 +34,7 @@ exports.predict = function (req, res) {
   var itemToLookFor = req.body.search || req.query.search;
 
   if(itemToLookFor.toLowerCase()!=="schlüssel"){ //as long as there is only one item (enables Alexa to says sth. meaningful)
-    res.status(404);
+    res.status(404).send("device not found");
     return;
   }
 
