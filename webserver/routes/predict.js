@@ -33,6 +33,11 @@ exports.predict = function (req, res) {
 
   var itemToLookFor = req.body.search || req.query.search;
 
+  if(itemToLookFor.toLowerCase()!=="schlüssel"){ //as long as there is only one item (enables Alexa to says sth. meaningful)
+    res.status(404);
+    return;
+  }
+
   client.connect(function (err) {
     if (err) {
       res.status(500).send("could not connect to postgres");
