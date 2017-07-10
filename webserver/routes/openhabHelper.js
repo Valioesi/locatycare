@@ -66,7 +66,7 @@ exports.openhabLightNotification = function(device) {
   openhabItemRequest(device, function(item) {
     exports.openhabRequest(device, "280,100,100");
     setTimeout(function() {
-      openhabRequest(device, item.state);
+      exports.openhabRequest(device, item.state);
     }, notificationTimeout);
   });
 };
