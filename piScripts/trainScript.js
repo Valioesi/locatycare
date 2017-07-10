@@ -2,7 +2,8 @@ var noble = require('noble');
 var http = require('http');
 var mac = require('getmac'); // npm package to get mac address from own maschine
 var address = '';
-var location = 'Schreibtisch';
+var location = process.argv[2];
+var count = 0;
 
 //get mac address
 mac.getMac(function (err, macAddress) {
@@ -50,7 +51,12 @@ noble.on('discover', function (peripheral) {
         var request = http.request(options, function (res) {
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
+                count++;
                 console.log('Response: ' + chunk);
+                noble.stopScanning();
+                console.log('start new Scan');
+                if(count<process.argv[3])
+                noble.startScanning();
             });
         });
 
