@@ -12,7 +12,7 @@ var locationConfig = {
     light: "Lampe1"
   },
   Telefon: {},
-  Bad:{},
+  Bad:{light:"Color3"},
 };
 var notificationTimeout = 30000;
 
