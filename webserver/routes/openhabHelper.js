@@ -63,7 +63,7 @@ var openhabItemRequest = function(itemPath, callback) {
 //sends a light notification -> turning the light back to the previous state after notificationTimout.
 exports.openhabLightNotification = function(device) {
   // TODO: to make it work with colors reconfigure Switches in OpenHAB as Color not Switch then send 0,0,0 etc. to the light for HSB
-  openhabItemRequest(itemPath, function(item) {
+  openhabItemRequest(device, function(item) {
     openhabRequest(device, "280,100,100");
     setTimeout(function() {
       openhabRequest(device, item.state);
