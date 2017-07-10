@@ -90,7 +90,7 @@ exports.predict = function (req, res) {
             if (device.match(/lampe/i)) {
               openhabRequest(device, "ON");
               setTimeout(function () {
-                openhabRequest(device, "OFF");
+                openhabHelper.openhabRequest(device, "OFF");
               }, 30000);
             } else {
               openhabHelper.openhabLightNotification(device);
