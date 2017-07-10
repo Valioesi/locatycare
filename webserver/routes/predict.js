@@ -11,7 +11,8 @@ var locationConfig = {
   Schreibtisch: {
     light: "Lampe1"
   },
-  Telefon: {}
+  Telefon: {},
+  Bad:{},
 };
 var notificationTimeout = 30000;
 
