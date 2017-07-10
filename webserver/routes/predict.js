@@ -5,11 +5,11 @@ var locationConfig = {
     light: "Color3"
   },
   Regal: {
-    light: "Lampe2",
+    light: "Color2",
     sound: "play_uri_switch"
   },
   Schreibtisch: {
-    light: "Color1"
+    light: "Lampe1"
   },
   Telefon: {}
 };
