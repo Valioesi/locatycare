@@ -1,14 +1,21 @@
 var https = require("https");
 var openhabHelper = require("./openhabHelper");
 var locationConfig = {
-  BlauerStuhl: { light: "Color3" },
-  Regal: { light: "Color2", sound: "play_uri_switch" },
-  Schreibtisch: { light: "Color1" },
-  Telefon:{}
+  BlauerStuhl: {
+    light: "Color3"
+  },
+  Regal: {
+    light: "Lampe2",
+    sound: "play_uri_switch"
+  },
+  Schreibtisch: {
+    light: "Color1"
+  },
+  Telefon: {}
 };
 var notificationTimeout = 30000;
 
-exports.predict = function(req, res) {
+exports.predict = function (req, res) {
   var pg = require("pg");
   var math = require("mathjs");
   // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
@@ -25,13 +32,13 @@ exports.predict = function(req, res) {
 
   var itemToLookFor = req.body.search || req.query.search;
 
-  client.connect(function(err) {
+  client.connect(function (err) {
     if (err) {
       res.status(500).send("could not connect to postgres");
       return console.error("could not connect to postgres", err);
     }
     //check which user is logged in
-    client.query("select user_id from registration", function(err, result) {
+    client.query("select user_id from registration", function (err, result) {
       if (err) {
         console.log("Error getting registered user");
       } else {
@@ -39,7 +46,7 @@ exports.predict = function(req, res) {
       }
     });
     var query = "select * from train_data_formatted";
-    client.query(query, function(err, result) {
+    client.query(query, function (err, result) {
       if (err) {
         res.status(500).send("error running query");
         return console.error("error running query", err);
@@ -47,7 +54,7 @@ exports.predict = function(req, res) {
       trainData = result.rows;
     });
     query = "select * from rssi_data";
-    client.query(query, function(err, result) {
+    client.query(query, function (err, result) {
       if (err) {
         res.status(500).send("error running query");
         return console.error("error running query", err);
@@ -80,8 +87,14 @@ exports.predict = function(req, res) {
           var device = locationConfig[location.location.replace(" ", "")].light;
           if (device) {
             // openhabHelper.openhabRequest(device, "ON");
-            openhabHelper.openhabLightNotification(device);
-
+            if (device.match(/lampe/i)) {
+              openhabRequest(device, "ON");
+              setTimeout(function () {
+                openhabRequest(device, "OFF");
+              }, 30000);
+            } else {
+              openhabHelper.openhabLightNotification(device);
+            }
           }
         } else if (loggedInUser == 1) {
           var device = locationConfig[location.location.replace(" ", "")].sound;
@@ -133,5 +146,3 @@ function getLocation(testPoint, trainData) {
   if (maxCount > 1) return maxLocation;
   else return knn_locations[0].location;
 }
-
-
