@@ -55,8 +55,11 @@ noble.on('discover', function (peripheral) {
                 console.log('Response: ' + chunk);
                 noble.stopScanning();
                 console.log('start new Scan');
-                if(count<process.argv[3])
+                if(count<process.argv[3]){
                 noble.startScanning();
+                }else{
+                    process.exit();
+                }
             });
         });
 
