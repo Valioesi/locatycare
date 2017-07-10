@@ -1,4 +1,13 @@
 var https = require("https");
+var openhabHelper = require("./openhabHelper");
+var locationConfig = {
+  BlauerStuhl: { light: "Color3" },
+  Regal: { light: "Color2", sound: "play_uri_switch" },
+  Schreibtisch: { light: "Color1" },
+  Telefon:{}
+};
+var notificationTimeout = 30000;
+
 exports.predict = function(req, res) {
   var pg = require("pg");
   var math = require("mathjs");
@@ -68,25 +77,16 @@ exports.predict = function(req, res) {
         //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
         console.log("logged in user: ", loggedInUser);
         if (loggedInUser == 2) {
-          if (location.location === "Schreibtisch") {
-            openhabRequest("Lampe1", "ON");
-            setTimeout(function() {
-              openhabRequest("Lampe1", "OFF");
-            }, 30000);
-          } else if (location.location === "Regal") {
-            openhabRequest("Lampe2", "ON");
-            setTimeout(function() {
-              openhabRequest("Lampe2", "OFF");
-            }, 30000);
-          } else if (location.location === "Blauer Stuhl") {
-            openhabRequest("Lampe3", "ON");
-            setTimeout(function() {
-              openhabRequest("Lampe3", "OFF");
-            }, 30000);
+          var device = locationConfig[location.location.replace(" ", "")].light;
+          if (device) {
+            // openhabHelper.openhabRequest(device, "ON");
+            openhabHelper.openhabLightNotification(device);
+
           }
         } else if (loggedInUser == 1) {
-          if (location.location === "Regal") {
-            openhabRequest("play_uri_switch", "ON");
+          var device = locationConfig[location.location.replace(" ", "")].sound;
+          if (device) {
+            openhabHelper.openhabRequest(device, "ON");
           }
         }
 
@@ -110,7 +110,7 @@ var knn_options = {
     rssi_3: 0.33
   }
 };
-
+//predicts the acutal location from the trained data
 function getLocation(testPoint, trainData) {
   var knn_locations = knn(testPoint, trainData, knn_options);
   var locations = {};
@@ -134,43 +134,4 @@ function getLocation(testPoint, trainData) {
   else return knn_locations[0].location;
 }
 
-//function which sends request to REST Api of OpenHab, Parameter = the item (Sonos or Hue)
-function openhabRequest(itemPath, body) {
-  //make call to REST API
 
-  var auth =
-    "Basic " +
-    new Buffer("grafjonas@web.de" + ":" + "locatycare").toString("base64");
-  var options = {
-    host: "home.myopenhab.org",
-    port: "443",
-    path: "/rest/items/" + itemPath,
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain",
-      "Content-Length": body.length,
-      Authorization: auth
-    }
-  };
-
-  var request = https.request(options, function(res) {
-    res.setEncoding("utf8");
-    res.on("data", function(chunk) {
-      console.log("Response: " + chunk);
-    });
-  });
-
-  request.write(body);
-  request.end();
-
-  // fetch('https://grafjonas@web.de:locatycare@home.myopenhab.org/rest/items/Lampe1' + itemPath, options)
-  // .then(function(response){
-  //     if(response == '200'){
-  //         console.log('OpenHab request successful');
-  //         return true;
-  //     }else{
-  //         console.log('OpenHab request not successful');
-  //         return false;
-  //     }
-  // });
-}
