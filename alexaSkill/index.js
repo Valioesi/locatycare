@@ -1,6 +1,8 @@
+// Derived from Amazon Node.js Alexa Color Sample Skill
+
 'use strict';
 let http = require('http');
-let ec2 = "ec2-52-51-231-52.eu-west-1.compute.amazonaws.com";
+let ec2 = "ec2-54-77-55-113.eu-west-1.compute.amazonaws.com";
 /**
  * This is based on the Color Example of Alexa Skills Kit api.
 
@@ -40,93 +42,33 @@ function buildResponse(sessionAttributes, speechletResponse) {
 
 
 // --------------- Functions that control the skill's behavior -----------------------
-
-function getWelcomeResponse(callback) {
+// user for standard Alexa Intent not called.
+function getHelpResponse(callback) {
     // If we wanted to initialize the session to have some attributes we could add those here.
     const sessionAttributes = {};
     const cardTitle = 'Welcome';
-    const speechOutput = 'Welcome to the Alexa Skills Kit sample. ' +
-        'Please tell me your favorite color by saying, my favorite color is red';
+    const speechOutput = 'Willkommen zu Locaty Care ' +
+        'Frag einfach nach deinen Gegenständen und dir finden sie für dich';
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
-    const repromptText = 'Please tell me your favorite color by saying, ' +
-        'my favorite color is red';
-    const shouldEndSession = false;
+    const repromptText = 'Find deine Gegenstände mit ' +
+        'wo ist mein Schlüssel';
+    const shouldEndSession = true;
 
     callback(sessionAttributes,
         buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
 }
-
+// not called
 function handleSessionEndRequest(callback) {
     const cardTitle = 'Session Ended';
-    const speechOutput = 'Thank you for trying the Alexa Skills Kit sample. Have a nice day!';
+    const speechOutput = 'Bye.';
     // Setting this to true ends the session and exits the skill.
     const shouldEndSession = true;
 
     callback({}, buildSpeechletResponse(cardTitle, speechOutput, null, shouldEndSession));
 }
-/*
-function createFavoriteColorAttributes(favoriteColor) {
-    return {
-        favoriteColor,
-    };
-}
-*/
-/**
- * Sets the color in the session and prepares the speech to reply to the user.
- */
- /*
-function setColorInSession(intent, session, callback) {
-    const cardTitle = intent.name;
-    const favoriteColorSlot = intent.slots.Color;
-    let repromptText = '';
-    let sessionAttributes = {};
-    const shouldEndSession = false;
-    let speechOutput = '';
 
-    if (favoriteColorSlot) {
-        const favoriteColor = favoriteColorSlot.value;
-        sessionAttributes = createFavoriteColorAttributes(favoriteColor);
-        speechOutput = `I now know your favorite color is ${favoriteColor}. You can ask me ` +
-            "your favorite color by saying, what's my favorite color?";
-        repromptText = "You can ask me your favorite color by saying, what's my favorite color?";
-    } else {
-        speechOutput = "I'm not sure what your favorite color is. Please try again.";
-        repromptText = "I'm not sure what your favorite color is. You can tell me your " +
-            'favorite color by saying, my favorite color is red';
-    }
-
-    callback(sessionAttributes,
-         buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
-}
-
-function getColorFromSession(intent, session, callback) {
-    let favoriteColor;
-    const repromptText = null;
-    const sessionAttributes = {};
-    let shouldEndSession = false;
-    let speechOutput = '';
-
-    if (session.attributes) {
-        favoriteColor = session.attributes.favoriteColor;
-    }
-
-    if (favoriteColor) {
-        speechOutput = `Your favorite color is ${favoriteColor}. Goodbye.`;
-        shouldEndSession = true;
-    } else {
-        speechOutput = "I'm not sure what your favorite color is, you can say, my favorite color " +
-            ' is red';
-    }
-
-    // Setting repromptText to null signifies that we do not want to reprompt the user.
-    // If the user does not respond or says something that is not understood, the session
-    // will end.
-    callback(sessionAttributes,
-         buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
-}
-*/
-
+//Called when intent locateThing is recognized. calls server to get location. 
 function locateIntent(intent, session, callback){
     let locationOfIntent;
     const repromptText = '';
@@ -135,13 +77,13 @@ function locateIntent(intent, session, callback){
     let speechOutput = '';
     
 
-    // get location here 
+    // get location  from server
     var options = {
         host: ec2,
         port: 3000,
         path: `/predict?search=${intent.slots.Thing.value.toLowerCase()}`
     };
-    console.log('beofre REQ')
+    console.log('before REQ')
     http.request(options, function(response) {
         console.log(response.statusCode)   
         let body = '';
@@ -151,16 +93,22 @@ function locateIntent(intent, session, callback){
             console.log('data')
         });
 
-        response.on('end', function(){
-            let json = JSON.parse(body);
-            console.log("answer: ",json)
-            
+        response.on('end', function(){            
             if(response.statusCode===200){
+                //location found for thing
+                let json = JSON.parse(body);
+                console.log("answer: ",json)
                 locationOfIntent = json.location
-                speechOutput = `Dein ${intent.slots.Thing.value} ist im ${locationOfIntent}.`;
+                speechOutput = `Dein ${intent.slots.Thing.value} liegt beim ${locationOfIntent}.`;
                 shouldEndSession = true;
-            }else{
+            }else if(response.statusCode===404){
+                 //returned if thing is not tracked
+                 speechOutput = "Dein "+ intent.slots.Thing.value +" wird gerade noch nicht geortet. Um das Gerät zu Orten wende dich an den Support.";
+                 shouldEndSession = true;
+            }else {
+                //any ohter error
                 speechOutput = "Wir können dein "+ intent.slots.Thing.value +" gerade nicht finden. Frag später nochmal!";
+                 shouldEndSession = true;
             }
             callback(sessionAttributes,
                 buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
@@ -178,14 +126,13 @@ function userIntent(intent, session, callback){
     let shouldEndSession = false;
     let speechOutput = '';
     
-
-    // get location here 
     var options = {
         host: ec2,
         port: 3000,
         path: `/registerUser?name=${intent.slots.User.value.toLowerCase()}`
     };
-
+    //set user on the Server
+    //users hard coded for now 
     http.request(options, function(response) {
         console.log(response.statusCode)   
         let body = '';
@@ -199,7 +146,7 @@ function userIntent(intent, session, callback){
             
             if(response.statusCode===200){
                 if(intent.slots.User.value.toLowerCase()==="traussen"){
-                     speechOutput = `Hallo Herr ${intent.slots.User.value}!`;
+                     speechOutput = `Hallo Herr Draussen!`;//Traussen would be spelled strange
                 }else if(intent.slots.User.value.toLowerCase()==="ostegaard"){
                      speechOutput = `Hallo Frau ${intent.slots.User.value}!`;
                 }else{
@@ -216,9 +163,7 @@ function userIntent(intent, session, callback){
         response.on('error', function(){
             let json = JSON.parse(body);
             console.log("answer: ",json)
-            
             speechOutput = "Wir sind gerade offline. Sorry!";
-
             callback(sessionAttributes,
                 buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
         });
@@ -241,9 +186,6 @@ function onSessionStarted(sessionStartedRequest, session) {
  */
 function onLaunch(launchRequest, session, callback) {
     console.log(`onLaunch requestId=${launchRequest.requestId}, sessionId=${session.sessionId}`);
-
-    // Dispatch to your skill's launch.
-    getWelcomeResponse(callback);
 }
 
 /**
@@ -257,17 +199,12 @@ function onIntent(intentRequest, session, callback) {
 
     // Dispatch to your skill's intent handlers
     if (intentName === 'FindThing') {
-        
-        //setColorInSession(intent, session, callback);
         locateIntent(intent, session, callback);
-        
-    //} else if (intentName === 'WhatsMyColorIntent') {
-    //    getColorFromSession(intent, session, callback);
     } else if (intentName==='SetUser'){
          userIntent(intent, session, callback);
     }
     else if (intentName === 'AMAZON.HelpIntent') {
-        getWelcomeResponse(callback);
+        getHelpResponse(callback);
     } else if (intentName === 'AMAZON.StopIntent' || intentName === 'AMAZON.CancelIntent') {
         handleSessionEndRequest(callback);
     } else {
@@ -292,16 +229,6 @@ function onSessionEnded(sessionEndedRequest, session) {
 exports.handler = (event, context, callback) => {
     try {
         console.log(`event.session.application.applicationId=${event.session.application.applicationId}`);
-
-        /**
-         * Uncomment this if statement and populate with your skill's application ID to
-         * prevent someone else from configuring a skill that sends requests to this function.
-         */
-        /*
-        if (event.session.application.applicationId !== 'amzn1.echo-sdk-ams.app.[unique-value-here]') {
-             callback('Invalid Application ID');
-        }
-        */
 
         if (event.session.new) {
             onSessionStarted({ requestId: event.request.requestId }, event.session);
