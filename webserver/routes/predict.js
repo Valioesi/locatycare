@@ -113,16 +113,10 @@ exports.predict = function (req, res) {
               openhabHelper.openhabLightNotification(device);
             }
           }
-<<<<<<< HEAD
-        } else if (loggedInUser == 1) {   //other person gets audio feedback via Sonos speakers
-          if (location.location === "Regal") {
-            openhabRequest("play_uri_switch", "ON");
-=======
         } else if (loggedInUser == 1) {
           var device = locationConfig[location.location.replace(" ", "")].sound;
           if (device) {
             openhabHelper.openhabRequest(device, "ON");
->>>>>>> a8bab67dff638975064d3e6d27147751625e8adf
           }
         }
 
@@ -148,12 +142,7 @@ var knn_options = {
     rssi_3: 0.33
   }
 };
-<<<<<<< HEAD
-
-//function to predict the location of the item using knn algorithm
-=======
 //predicts the acutal location from the trained data
->>>>>>> a8bab67dff638975064d3e6d27147751625e8adf
 function getLocation(testPoint, trainData) {
   var knn_locations = knn(testPoint, trainData, knn_options);
   var locations = {};
@@ -175,39 +164,4 @@ function getLocation(testPoint, trainData) {
   }
   if (maxCount > 1) return maxLocation;
   else return knn_locations[0].location;
-<<<<<<< HEAD
 }
-
-//function which sends request to REST Api of OpenHab, Parameter = the item (Sonos or Hue)
-function openhabRequest(itemPath, body) {
-  //make call to REST API of OpenHab
-  var auth =
-    "Basic " +
-    new Buffer("grafjonas@web.de" + ":" + "locatycare").toString("base64");
-  var options = {
-    host: "home.myopenhab.org",
-    port: "443",
-    path: "/rest/items/" + itemPath,
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain",
-      "Content-Length": body.length,
-      Authorization: auth
-    }
-  };
-
-  var request = https.request(options, function(res) {
-    res.setEncoding("utf8");
-    res.on("data", function(chunk) {
-      console.log("Response: " + chunk);
-    });
-  });
-
-  request.write(body);
-  request.end();
-
-
-}
-=======
-}
->>>>>>> a8bab67dff638975064d3e6d27147751625e8adf
