@@ -5,7 +5,24 @@
  */
 
 var https = require("https");
-exports.predict = function(req, res) {
+var openhabHelper = require("./openhabHelper");
+var locationConfig = {
+  BlauerStuhl: {
+    light: "Color3"
+  },
+  Regal: {
+    light: "Color2",
+    sound: "play_uri_switch"
+  },
+  Schreibtisch: {
+    light: "Lampe1"
+  },
+  Telefon: {},
+  Bad:{light:"Color3"},
+};
+var notificationTimeout = 30000;
+
+exports.predict = function (req, res) {
   var pg = require("pg");
   var math = require("mathjs");
   var client = new pg.Client({
@@ -21,13 +38,18 @@ exports.predict = function(req, res) {
 
   var itemToLookFor = req.body.search || req.query.search;
 
-  client.connect(function(err) {
+  if(itemToLookFor.toLowerCase()!=="schlüssel"){ //as long as there is only one item (enables Alexa to says sth. meaningful)
+    res.status(404).send("device not found");
+    return;
+  }
+
+  client.connect(function (err) {
     if (err) {
       res.status(500).send("could not connect to postgres");
       return console.error("could not connect to postgres", err);
     }
     //check which user is logged in
-    client.query("select user_id from registration", function(err, result) {
+    client.query("select user_id from registration", function (err, result) {
       if (err) {
         console.log("Error getting registered user");
       } else {
@@ -37,7 +59,7 @@ exports.predict = function(req, res) {
     
     //get the train data 
     var query = "select * from train_data_formatted";
-    client.query(query, function(err, result) {
+    client.query(query, function (err, result) {
       if (err) {
         res.status(500).send("error running query");
         return console.error("error running query", err);
@@ -47,7 +69,7 @@ exports.predict = function(req, res) {
 
     //get the current rssi data, 10 rows are stored over the last minute or so --> we take the average
     query = "select * from rssi_data";
-    client.query(query, function(err, result) {
+    client.query(query, function (err, result) {
       if (err) {
         res.status(500).send("error running query");
         return console.error("error running query", err);
@@ -79,25 +101,28 @@ exports.predict = function(req, res) {
         //depending on the location a different lamp is activated
         console.log("logged in user: ", loggedInUser);
         if (loggedInUser == 2) {
-          if (location.location === "Schreibtisch") {
-            openhabRequest("Lampe1", "ON");
-            setTimeout(function() {
-              openhabRequest("Lampe1", "OFF");
-            }, 30000);
-          } else if (location.location === "Regal") {
-            openhabRequest("Lampe2", "ON");
-            setTimeout(function() {
-              openhabRequest("Lampe2", "OFF");
-            }, 30000);
-          } else if (location.location === "Blauer Stuhl") {
-            openhabRequest("Lampe3", "ON");
-            setTimeout(function() {
-              openhabRequest("Lampe3", "OFF");
-            }, 30000);
+          var device = locationConfig[location.location.replace(" ", "")].light;
+          if (device) {
+            // openhabHelper.openhabRequest(device, "ON");
+            if (device.match(/lampe/i)) {
+              openhabHelper.openhabRequest(device, "ON");
+              setTimeout(function () {
+                openhabHelper.openhabRequest(device, "OFF");
+              }, 30000);
+            } else {
+              openhabHelper.openhabLightNotification(device);
+            }
           }
+<<<<<<< HEAD
         } else if (loggedInUser == 1) {   //other person gets audio feedback via Sonos speakers
           if (location.location === "Regal") {
             openhabRequest("play_uri_switch", "ON");
+=======
+        } else if (loggedInUser == 1) {
+          var device = locationConfig[location.location.replace(" ", "")].sound;
+          if (device) {
+            openhabHelper.openhabRequest(device, "ON");
+>>>>>>> a8bab67dff638975064d3e6d27147751625e8adf
           }
         }
 
@@ -123,8 +148,12 @@ var knn_options = {
     rssi_3: 0.33
   }
 };
+<<<<<<< HEAD
 
 //function to predict the location of the item using knn algorithm
+=======
+//predicts the acutal location from the trained data
+>>>>>>> a8bab67dff638975064d3e6d27147751625e8adf
 function getLocation(testPoint, trainData) {
   var knn_locations = knn(testPoint, trainData, knn_options);
   var locations = {};
@@ -146,6 +175,7 @@ function getLocation(testPoint, trainData) {
   }
   if (maxCount > 1) return maxLocation;
   else return knn_locations[0].location;
+<<<<<<< HEAD
 }
 
 //function which sends request to REST Api of OpenHab, Parameter = the item (Sonos or Hue)
@@ -178,3 +208,6 @@ function openhabRequest(itemPath, body) {
 
 
 }
+=======
+}
+>>>>>>> a8bab67dff638975064d3e6d27147751625e8adf
