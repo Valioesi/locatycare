@@ -1,11 +1,17 @@
+/**
+ * This node script uses the npm package "noble" to get access to the bluetooth rssi data of nearby devices. 
+ * It gets the value and sends it to the server to be stored. 
+ * The script is used to collect train data of different locations.
+ */
+
 var noble = require('noble');
 var http = require('http');
-var mac = require('getmac'); // npm package to get mac address from own maschine
+var mac = require('getmac'); // npm package to get mac address from own machine
 var address = '';
 var location = process.argv[2];
 var count = 0;
 
-//get mac address
+//get mac address of the raspberry pi
 mac.getMac(function (err, macAddress) {
     if (err) {
         console.log('Error getting mac address');
@@ -22,21 +28,24 @@ noble.on('stateChange', function (state) {
     }
 });
 
+//this part of the code is called when a bluetooth device is found
 noble.on('discover', function (peripheral) {
+    //we only want to proceed if the XY Findables Tracker is found
     if (peripheral.id == "00ea24407984") {
 
         console.log('Found device with local name: ' + peripheral.advertisement.localName);
         console.log('advertising the following service uuid\'s: ' + peripheral.advertisement.serviceUuids);
         console.log();
 
-        //make call to REST API
+        //make call to REST API, route is /writeTrainData
+        
         var body = JSON.stringify({
             device_id: address,
             rssi: peripheral.rssi,
             location: location
         });
 
-        //TODO: change host after restart of server
+        //the host has to changed after every restart of server
         var options = {
             host: 'ec2-54-77-55-113.eu-west-1.compute.amazonaws.com',
             port: '3000',

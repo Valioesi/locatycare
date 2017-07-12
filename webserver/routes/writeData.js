@@ -1,26 +1,28 @@
+/**
+ * This file contains the writeData function which is called via the route /writeData of our API.
+ * It receives the rssi data collected by the raspberry pis during runtime and stores it in a table, 10 rows at a time
+ */
+
 var data = { rssi_1: false, rssi_1: false, rssi_3: false };
 
 exports.writeData = function(req, res) {
   var device_id = req.body.device_id || req.query.device_id;
-  // var gear_id = req.body.gear_id || req.query.gear_id;
   var rssi = req.body.rssi || req.query.rssi;
 
   //map device id (mac address of pi) to corresponding name of column in database
   if (device_id === "b8:27:eb:5d:15:a4") {
-    // device_id = "rssi_1";
     data.rssi_1 = rssi;
     console.log("received from pi 1");
   } else if (device_id === "b8:27:eb:08:e9:1c") {
-    // device_id = "rssi_2";
-
     data.rssi_2 = rssi;
     console.log("received from pi 2");
   } else {
-    // device_id = "rssi_3";
     data.rssi_3 = rssi;
     console.log("received from pi 3");
   }
 
+  //only if we have received data from all three pis we store the values in the database, so that we
+  //can keep all of the values in one row
   if (data.rssi_3 && data.rssi_2 && data.rssi_1) {
     console.log("received all 3 updating...", data);
     var pg = require("pg");
@@ -35,9 +37,7 @@ exports.writeData = function(req, res) {
         res.status(500).send("could not connect to postgres");
         return console.error("could not connect to postgres", err);
       }
-      //new code, which only updates the one row; only the appropriate (depending on the device) is updated
-      // var query =
-      //   "UPDATE rssi_data SET " + device_id + " = " + rssi + ", time = NOW()";
+
       var query =
         "INSERT INTO rssi_data  (rssi_1,rssi_2,rssi_3,time) values  (" +
         data.rssi_1 +
@@ -56,6 +56,7 @@ exports.writeData = function(req, res) {
         res.status(200).send("Updated");
         data = { rssi_1: false, rssi_2: false, rssi_3: false };
 
+        //if we have more than 10 rows already we delete the oldest row
         var query2 = "SELECT * FROM rssi_data;";
         client.query(query2, function(err, result) {
           if (err) {

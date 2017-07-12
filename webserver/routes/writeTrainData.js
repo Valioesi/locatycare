@@ -1,3 +1,11 @@
+/**
+ * This file contains the writeTrainData function which is called via the route /writeTrainData of our API.
+ * It receives the rssi data collected by the raspberry pis during the training process and stores it in the database
+ * Later the table is formatted (final table is called train_data_formatted) using the script formatData.js, so that we 
+ * can properly use the predict funtion.
+ */
+
+
 exports.writeTrainData = function(req, res){
   var device_id = req.body.device_id || req.query.device_id;
   // var gear_id = req.body.gear_id || req.query.gear_id;
@@ -25,7 +33,6 @@ exports.writeTrainData = function(req, res){
       res.status(500).send('could not connect to postgres');
       return console.error('could not connect to postgres', err);
     }
-    //TODO: delete gear_id in database
     var query = 'insert into train_data (device_id, rssi, location, time) values (\''+device_id+'\', '+rssi+ ', \'' +location+ '\', NOW());';
     console.log(query);
     client.query(query, function(err, result) {

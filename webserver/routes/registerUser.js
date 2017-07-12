@@ -1,3 +1,8 @@
+/**
+ * This file contains the registerUser function which is called via the route /registerUser of our API.
+ * Depending on the argument of the request the id of the user is stored in the database
+ */
+
 exports.registerUser = function (req, res) {
     var name = req.body.name || req.query.name;
 
@@ -16,6 +21,7 @@ exports.registerUser = function (req, res) {
         host: 'localhost',
     });
     
+    //make database connection
     client.connect(function (err) {
         if (err) {
             res.status(500).send('could not connect to postgres');

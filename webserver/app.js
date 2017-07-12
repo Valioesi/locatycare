@@ -1,6 +1,7 @@
 
 /**
- * Module dependencies.
+ * app.js defines the different routes and which correspondent functions should be called
+ * it also starts the api server when the script is called 
  */
 
 var express = require('express'),
@@ -40,14 +41,12 @@ app.get('/', routes.index);
 var writeDataRoute = require('./routes/writeData');
 app.get('/writeData', cors(),  writeDataRoute.writeData);
 app.post('/writeData', cors(), writeDataRoute.writeData);
-var getDataRoute = require('./routes/getData');
-app.get('/getData', cors(), getDataRoute.getData);
+
 
 var writeTrainDataRoute = require('./routes/writeTrainData');
 app.get('/writeTrainData', cors(),  writeTrainDataRoute.writeTrainData);
 app.post('/writeTrainData', cors(), writeTrainDataRoute.writeTrainData);
-var getTrainDataRoute = require('./routes/getTrainData');
-app.get('/getTrainData', cors(), getTrainDataRoute.getTrainData);
+
 
 var predictRoute = require('./routes/predict');
 app.post('/predict', cors(), predictRoute.predict);

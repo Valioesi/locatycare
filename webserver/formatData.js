@@ -1,3 +1,8 @@
+/**
+ * This is a script to format the train data which is collected by trainScript.js and processed by the /writeTrainData route
+ * The script rebuilds the table so that we afterwards have the values of all 3 pis in one row. 
+ */
+
 var pg = require("pg");
 
 var client = new pg.Client({

@@ -1,8 +1,13 @@
+/**
+ * This file contains the predict function which is called via the route /predict of our API.
+ * It uses a knn neighbour algorithm to predict the location of the searched for item. 
+ * There it has to get the data stored in the tables rssi_data and train_data_formatted
+ */
+
 var https = require("https");
 exports.predict = function(req, res) {
   var pg = require("pg");
   var math = require("mathjs");
-  // var conString = process.env.DATABASE_URL || 'postgres://localhost:5432/postgres';
   var client = new pg.Client({
     user: "postgres",
     password: "password",
@@ -29,6 +34,8 @@ exports.predict = function(req, res) {
         loggedInUser = result.rows[0].user_id;
       }
     });
+    
+    //get the train data 
     var query = "select * from train_data_formatted";
     client.query(query, function(err, result) {
       if (err) {
@@ -37,6 +44,8 @@ exports.predict = function(req, res) {
       }
       trainData = result.rows;
     });
+
+    //get the current rssi data, 10 rows are stored over the last minute or so --> we take the average
     query = "select * from rssi_data";
     client.query(query, function(err, result) {
       if (err) {
@@ -46,13 +55,14 @@ exports.predict = function(req, res) {
       var rssi1Array = [];
       var rssi2Array = [];
       var rssi3Array = [];
+
       for (var i = 0; i < result.rows.length; i++) {
         rssi1Array.push(result.rows[i].rssi_1);
         rssi2Array.push(result.rows[i].rssi_2);
         rssi3Array.push(result.rows[i].rssi_3);
       }
 
-      //now we get the median from rssi_1, rssi_2, rssi_3 and add it to testPoint
+      //now we get the mean from rssi_1, rssi_2, rssi_3 and add it to testPoint
       var testPoint = {
         rssi_1: math.mean(rssi1Array),
         rssi_2: math.mean(rssi2Array),
@@ -66,6 +76,7 @@ exports.predict = function(req, res) {
         };
 
         //if registeredUser is 1 (Traussen) we want send request to Phillips Hue
+        //depending on the location a different lamp is activated
         console.log("logged in user: ", loggedInUser);
         if (loggedInUser == 2) {
           if (location.location === "Schreibtisch") {
@@ -84,7 +95,7 @@ exports.predict = function(req, res) {
               openhabRequest("Lampe3", "OFF");
             }, 30000);
           }
-        } else if (loggedInUser == 1) {
+        } else if (loggedInUser == 1) {   //other person gets audio feedback via Sonos speakers
           if (location.location === "Regal") {
             openhabRequest("play_uri_switch", "ON");
           }
@@ -101,6 +112,8 @@ exports.predict = function(req, res) {
     });
   });
 };
+
+//options for nearest neighbour algorithm
 var knn = require("alike");
 var knn_options = {
   k: 3,
@@ -111,6 +124,7 @@ var knn_options = {
   }
 };
 
+//function to predict the location of the item using knn algorithm
 function getLocation(testPoint, trainData) {
   var knn_locations = knn(testPoint, trainData, knn_options);
   var locations = {};
@@ -136,8 +150,7 @@ function getLocation(testPoint, trainData) {
 
 //function which sends request to REST Api of OpenHab, Parameter = the item (Sonos or Hue)
 function openhabRequest(itemPath, body) {
-  //make call to REST API
-
+  //make call to REST API of OpenHab
   var auth =
     "Basic " +
     new Buffer("grafjonas@web.de" + ":" + "locatycare").toString("base64");
@@ -163,14 +176,5 @@ function openhabRequest(itemPath, body) {
   request.write(body);
   request.end();
 
-  // fetch('https://grafjonas@web.de:locatycare@home.myopenhab.org/rest/items/Lampe1' + itemPath, options)
-  // .then(function(response){
-  //     if(response == '200'){
-  //         console.log('OpenHab request successful');
-  //         return true;
-  //     }else{
-  //         console.log('OpenHab request not successful');
-  //         return false;
-  //     }
-  // });
+
 }
