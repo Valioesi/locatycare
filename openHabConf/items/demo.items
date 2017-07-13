@@ -1,0 +1,7 @@
+Dimmer Sonos_notificationvolume          "Alarm Volume"              <dimmer>           (Sonos) {channel="sonos:PLAY1:RINCON_B8E9378B3AD401400:notificationvolume"}
+
+Switch alarm    "Alarm"  <switch>    (Sonos) {channel="sonos:PLAY1:RINCON_B8E9378B3AD401400:alarm"}
+
+String playuri	"play" <string>  (Sonos) {channel="sonos:PLAY1:RINCON_B8E9378B3AD401400:playuri"}
+
+Player test_player "Test player" (Sonos) {channel="sonos:PLAY1:RINCON_B8E9378B3AD401400:control"}

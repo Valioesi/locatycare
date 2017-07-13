@@ -1,0 +1,8 @@
+rule "Sonos play uri"
+when
+	Item play_uri_switch received command ON
+then
+	val url = "http://freesound.org/data/previews/234/234527_4019029-lq.mp3"
+	logInfo("Sonos Say URI","Link: " + url)
+	sendCommand(playuri, url)
+end
